@@ -13,6 +13,7 @@ conv=['一','二','三','四','五','六','七','八','九',
       '①','②','③','④','⑤','⑥','⑦','⑧','⑨',
       '東','南','西','北','白','發','中']
 dic=dict(zip(lst,conv))
+yaochu=conv[0:1]+conv[8:10]+conv[17:19]+conv[26:27]
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -105,6 +106,26 @@ class Tehai:
                 return False
         return True
 
+# チャンタor純チャンタ
+    def chanta(self,lst):
+        chanta=[True,True]  #[純チャン, チャンタ]
+        for p in lst:
+            if p[0] not in yaochu and p[-1] not in yaochu:
+                chanta[0] = False
+                if p[0] not in conv[27:] and p[-1] not in conv[27:]:
+                    chanta[1] = False
+        return chanta
+
+# 平和
+    def pinfu(self, lst):
+        for p in lst:
+            if p.count(p[0]) != 1:
+                return False
+            if dic[self.tsumo] in p[0]+p[-1]:
+                return True
+        return False
+
+
 # あたり牌を検索
     def atari(self):
         atari=[]
@@ -137,11 +158,18 @@ class Tehai:
         if agari:
             if flag:
                 print("雀頭1 面子4")
-                l=[]
+                self.agari=[]
                 for a in agari:
-                    if a not in l:
-                        l.append(a)
+                    if a not in self.agari:
+                        self.agari.append(a)
                         print(a)
+                        if self.pinfu(a[1:]):
+                            print("平和")
+                        chanta=tehai.chanta(a)
+                        if chanta[0]:
+                            print("純チャン")
+                        elif chanta[1]:
+                            print("チャンタ")
             return True
         return False
 
@@ -193,7 +221,7 @@ if __name__ == '__main__':
             if mode == 2:
                 if tehai.hantei(True):
                     if tehai.tanyao():
-                        print("たんやお",end="")
+                        print("たんやお",end=" ")
                     print()
             print("\n > ", end="")
             usrinput=input()
