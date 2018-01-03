@@ -98,6 +98,13 @@ class Tehai:
                 agari.append([" ".join([dic[t2]]*2)]+(ko+syu)[::-1])
         return agari
 
+# タンヤオ
+    def tanyao(self):
+        for hai in self.tehai:
+            if hai//10==4 or hai%10==1 or hai%10==9:
+                return False
+        return True
+
 # あたり牌を検索
     def atari(self):
         atari=[]
@@ -110,12 +117,6 @@ class Tehai:
 
 # アガリ状態かどうか判定する
     def hantei(self,flag):
-        if len(self.count_toi()) == 7:
-            if flag:
-                print("七対子")
-                print(["%c %c"%(dic[x],dic[x]) for x in self.count_toi()])
-            return True
-
         tmp=[]
         for t in sorted(self.tehai):
             if t not in tmp:
@@ -124,6 +125,12 @@ class Tehai:
             if flag:
                 print("国士無双")
                 print([dic[x] for x in self.tehai])
+            return True
+
+        if len(self.count_toi()) == 7:
+            if flag:
+                print("七対子")
+                print(["%c %c"%(dic[x],dic[x]) for x in self.count_toi()])
             return True
 
         agari=self.analysis()
@@ -184,7 +191,10 @@ if __name__ == '__main__':
             if mode == 1:
                 tehai.atari()
             if mode == 2:
-                tehai.hantei(True)
+                if tehai.hantei(True):
+                    if tehai.tanyao():
+                        print("たんやお",end="")
+                    print()
             print("\n > ", end="")
             usrinput=input()
 # 'q' または ':q' で終了
