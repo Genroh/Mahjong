@@ -105,6 +105,16 @@ class Tehai:
                 return False
         return True
 
+# 平和
+    def pinfu(self, lst):
+        for p in lst:
+            if p.count(p[0]) != 1:
+                return False
+            if dic[self.tsumo] in p[0]+p[-1]:
+                return True
+        return False
+
+
 # あたり牌を検索
     def atari(self):
         atari=[]
@@ -142,6 +152,8 @@ class Tehai:
                     if a not in l:
                         l.append(a)
                         print(a)
+                        if self.pinfu(a[1:]):
+                            print("平和")
             return True
         return False
 
@@ -193,7 +205,7 @@ if __name__ == '__main__':
             if mode == 2:
                 if tehai.hantei(True):
                     if tehai.tanyao():
-                        print("たんやお",end="")
+                        print("たんやお",end=" ")
                     print()
             print("\n > ", end="")
             usrinput=input()
