@@ -13,7 +13,6 @@ conv=['一','二','三','四','五','六','七','八','九',
       '①','②','③','④','⑤','⑥','⑦','⑧','⑨',
       '東','南','西','北','白','發','中']
 dic=dict(zip(lst,conv))
-yaochu=conv[0:1]+conv[8:10]+conv[17:19]+conv[26:27]
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -197,7 +196,7 @@ class Tehai:
                 for a in agari:
                     if a not in self.agari:
                         self.agari.append(a)
-                        print(a)
+                        print([" ".join([dic[x] for x in p]) for p in a])
                         if self.pinfu(a):
                             print("平和",end=" ")
                         chanta=self.chanta(a)
@@ -247,14 +246,14 @@ if __name__ == '__main__':
         while True:
             os.system('cls')
 # 数値と文字の対応表を表示
-            print("  ", *["%2d"%i for i in range(1,10)])
+            print("  ", *[f"{i:2}" for i in range(1,10)])
             for i in range(4):
-                print("%d"%((i+1)*10), *conv[i*9:(i+1)*9])
+                print(f"{(i+1)*10}", *conv[i*9:(i+1)*9])
             print()
 # モード表示
             print("mode =", mode)
             print()
-            print(*["%02d"%x for x in range(14)])
+            print(*[f"{x:02}" for x in range(14)])
             print(*tehai.conv())
             print()
             print("対子:",*[dic[x] for x in tehai.count_toi()])
