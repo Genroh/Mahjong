@@ -22,6 +22,7 @@ class Tehai:
         self.tehai = lst*4
         random.shuffle(self.tehai)
         self.tehai = sorted(self.tehai[:14])
+        self.tsumo = self.tehai[13]
 
 # 刻子をカウントする
     def __kotsu(self, t, tset, ko):
@@ -38,7 +39,6 @@ class Tehai:
             while s in t:
                 if s in t and s+1 in t and s+2 in t:
                     syu.append([s,s+1,s+2])
-#                    syu.append(" ".join(map(str, [s,s+1,s+2])))
                     del t[t.index(s)]
                     del t[t.index(s+1)]
                     del t[t.index(s+2)]
@@ -116,14 +116,43 @@ class Tehai:
                     chanta[1] = False
         return chanta
 
-# 三色同順
-    def doujun(self,lst):
+# 三色同順or三色同刻
+    def sansyoku(self,lst):
+        sansyoku=[False,False]
+        ones,tens=[],[]
+        for p in lst[1:]:
+            if p[0]//10==4:
+                continue
+            ones.append([i%10 for i in p])
+            tens.append(p[0]//10)
+        sames=[ones.count(x) for x in ones]
+        if 3 not in sames and 4 not in sames:
+            return sansyoku
+        if 1 in sames:
+            ones.pop(sames.index(1))
+            tens.pop(sames.index(1))
+        if sorted(set(tens))==[1,2,3]:
+            if ones[0].count(ones[0][0])==1:
+                sansyoku[0]=True
+            else:
+                sansyoku[1]=True
+        return sansyoku
 
+# 一盃口
+    def ipeko(self, lst):
+        ipeko=[]
+        for p in lst[1:]:
+            if p.count(p[0])==1:
+                ipeko.append(p)
+        sames=[ipeko.count(x) for x in ipeko]
+        for i in sames:
+            if i>=2:
+                return True
         return False
 
 # 平和
     def pinfu(self, lst):
-        for p in lst:
+        for p in lst[1:]:
             if p.count(p[0]) != 1:
                 return False
             if self.tsumo in [p[0],p[-1]]:
@@ -169,13 +198,21 @@ class Tehai:
                     if a not in self.agari:
                         self.agari.append(a)
                         print(a)
-                        if self.pinfu(a[1:]):
-                            print("平和")
-                        chanta=tehai.chanta(a)
+                        if self.pinfu(a):
+                            print("平和",end=" ")
+                        chanta=self.chanta(a)
                         if chanta[0]:
-                            print("純チャン")
+                            print("純チャン",end=" ")
                         elif chanta[1]:
-                            print("チャンタ")
+                            print("チャンタ",end=" ")
+                        sansyoku=self.sansyoku(a)
+                        if sansyoku[0]:
+                            print("三色同順",end=" ")
+                        elif sansyoku[1]:
+                            print("三色同刻",end=" ")
+                        if self.ipeko(a):
+                            print("一盃口",end=" ")
+                        print()
             return True
         return False
 
