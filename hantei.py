@@ -38,7 +38,6 @@ class Tehai:
             while s in t:
                 if s in t and s+1 in t and s+2 in t:
                     syu.append([s,s+1,s+2])
-#                    syu.append(" ".join(map(str, [s,s+1,s+2])))
                     del t[t.index(s)]
                     del t[t.index(s+1)]
                     del t[t.index(s+2)]
@@ -116,10 +115,27 @@ class Tehai:
                     chanta[1] = False
         return chanta
 
-# 三色同順
-    def doujun(self,lst):
-
-        return False
+# 三色同順or三色同刻
+    def sansyoku(self,lst):
+        sansyoku=[False,False]
+        ones,tens=[],[]
+        for p in lst:
+            if p[0]//10==4:
+                continue
+            ones.append([i%10 for i in p])
+            tens.append(p[0]//10)
+        sames=[ones.count(x) for x in ones]
+        if 3 not in sames and 4 not in sames:
+            return sansyoku
+        if 1 in sames:
+            ones.pop(sames.index(1))
+            tens.pop(sames.index(1))
+        if sorted(set(tens))==[1,2,3]:
+            if ones[0].count(ones[0][0])==1:
+                sansyoku[0]=True
+            else:
+                sansyoku[1]=True
+        return sansyoku
 
 # 平和
     def pinfu(self, lst):
@@ -170,12 +186,18 @@ class Tehai:
                         self.agari.append(a)
                         print(a)
                         if self.pinfu(a[1:]):
-                            print("平和")
-                        chanta=tehai.chanta(a)
+                            print("平和",end=" ")
+                        chanta=self.chanta(a)
                         if chanta[0]:
-                            print("純チャン")
+                            print("純チャン",end=" ")
                         elif chanta[1]:
-                            print("チャンタ")
+                            print("チャンタ",end=" ")
+                        sansyoku=self.sansyoku(a[1:])
+                        if sansyoku[0]:
+                            print("三色同順",end=" ")
+                        elif sansyoku[1]:
+                            print("三色同刻",end=" ")
+                        print()
             return True
         return False
 
