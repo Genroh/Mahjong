@@ -27,7 +27,7 @@ class Tehai:
     def __kotsu(self, t, tset, ko):
         for s in tset:
             if t.count(s) >=3:
-                ko.append(" ".join([dic[s]]*3))
+                ko.append([s]*3)
                 del t[t.index(s):t.index(s)+3]
 
 # 順子をカウントする
@@ -37,7 +37,7 @@ class Tehai:
                 continue
             while s in t:
                 if s in t and s+1 in t and s+2 in t:
-                    syu.append(" ".join([dic[x] for x in range(s, s+3)]))
+                    syu.append([s,s+1,s+2])
 #                    syu.append(" ".join(map(str, [s,s+1,s+2])))
                     del t[t.index(s)]
                     del t[t.index(s+1)]
@@ -65,38 +65,38 @@ class Tehai:
         for t,t2 in zip(target,toi):
 # 含まれている対子毎にそれを雀頭として残りを解析
             tset=sorted(set(t), key=t.index)
-            t1=t
-            ko=[]
-            syu=[]
-            self.__kotsu(t1, tset, ko)
-            self.__syuntsu(t1, tset, syu)
-            if len(ko+syu) == 4:
 # 刻子優先、順子は正順
-                agari.append([" ".join([dic[t2]]*2)]+ko+syu)
+            t1=t
+            ko=[]
+            syu=[]
+            self.__kotsu(t1, tset, ko)
+            self.__syuntsu(t1, tset, syu)
+            if len(ko+syu) == 4:
+                agari.append([[t2]*2]+ko+syu)
+# 刻子優先、順子は逆順
             t1=t
             ko=[]
             syu=[]
             self.__kotsu(t1, tset[::-1], ko)
             self.__syuntsu(t1, tset[::-1], syu)
             if len(ko+syu) == 4:
-# 刻子優先、順子は逆順
-                agari.append([" ".join([dic[t2]]*2)]+(ko+syu)[::-1])
+                agari.append([[t2]*2]+(ko+syu)[::-1])
+# 順子優先、順子は正順
             t1=t
             ko=[]
             syu=[]
             self.__syuntsu(t1, tset, syu)
             self.__kotsu(t1, tset, ko)
             if len(ko+syu) == 4:
-# 順子優先、順子は正順
-                agari.append([" ".join([dic[t2]]*2)]+ko+syu)
+                agari.append([[t2]*2]+ko+syu)
+# 順子優先、順子は逆順
             t1=t
             ko=[]
             syu=[]
             self.__syuntsu(t1, tset[::-1], syu)
             self.__kotsu(t1, tset[::-1], ko)
             if len(ko+syu) == 4:
-# 順子優先、順子は逆順
-                agari.append([" ".join([dic[t2]]*2)]+(ko+syu)[::-1])
+                agari.append([[t2]*2]+(ko+syu)[::-1])
         return agari
 
 # タンヤオ
@@ -116,13 +116,18 @@ class Tehai:
                     chanta[1] = False
         return chanta
 
+# 三色同順
+    def doujun(self,lst):
+        return False
+
 # 平和
     def pinfu(self, lst):
         for p in lst:
             if p.count(p[0]) != 1:
                 return False
-            if dic[self.tsumo] in p[0]+p[-1]:
-                return True
+            if self.tsumo in [p[0],p[-1]]:
+                if ((self.tsumo-3)%10)*((self.tsumo+3)%10)!=0:
+                    return True
         return False
 
 
