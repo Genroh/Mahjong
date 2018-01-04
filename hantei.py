@@ -66,7 +66,7 @@ class Tehai:
 # 含まれている対子毎にそれを雀頭として残りを解析
             tset=sorted(set(t), key=t.index)
 # 刻子優先、順子は正順
-            t1=t
+            t1=t.copy()
             ko=[]
             syu=[]
             self.__kotsu(t1, tset, ko)
@@ -74,7 +74,7 @@ class Tehai:
             if len(ko+syu) == 4:
                 agari.append([[t2]*2]+ko+syu)
 # 刻子優先、順子は逆順
-            t1=t
+            t1=t.copy()
             ko=[]
             syu=[]
             self.__kotsu(t1, tset[::-1], ko)
@@ -82,7 +82,7 @@ class Tehai:
             if len(ko+syu) == 4:
                 agari.append([[t2]*2]+(ko+syu)[::-1])
 # 順子優先、順子は正順
-            t1=t
+            t1=t.copy()
             ko=[]
             syu=[]
             self.__syuntsu(t1, tset, syu)
@@ -90,7 +90,7 @@ class Tehai:
             if len(ko+syu) == 4:
                 agari.append([[t2]*2]+ko+syu)
 # 順子優先、順子は逆順
-            t1=t
+            t1=t.copy()
             ko=[]
             syu=[]
             self.__syuntsu(t1, tset[::-1], syu)
@@ -110,14 +110,15 @@ class Tehai:
     def chanta(self,lst):
         chanta=[True,True]  #[純チャン, チャンタ]
         for p in lst:
-            if p[0] not in yaochu and p[-1] not in yaochu:
+            if p[0]%10 not in [1,9] and p[-1]%10 not in [1,9]:
                 chanta[0] = False
-                if p[0] not in conv[27:] and p[-1] not in conv[27:]:
+                if p[0]//10 != 4 and p[-1]//10 != 4:
                     chanta[1] = False
         return chanta
 
 # 三色同順
     def doujun(self,lst):
+
         return False
 
 # 平和
