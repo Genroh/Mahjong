@@ -196,7 +196,7 @@ class Tehai:
                 for a in agari:
                     if a not in self.agari:
                         self.agari.append(a)
-                        print(a)
+                        print([" ".join([dic[x] for x in p]) for p in a])
                         if self.pinfu(a):
                             print("平和",end=" ")
                         chanta=self.chanta(a)
