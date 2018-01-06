@@ -183,11 +183,7 @@ class Tehai:
     def ittsu(self, lst):
         lst = [x for inner in lst[1:] for x in inner]
         for i in range(1, 4):
-            flag = True
-            for j in range(1, 10):
-                if i*10+j not in lst:
-                    flag = False
-            if flag:
+            if set(range(i*10+1, i*10+10)) <= set(lst):
                 return True
         return False
 
