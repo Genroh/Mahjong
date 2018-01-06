@@ -10,7 +10,7 @@ import random
 lst = [i for i in range(11, 48) if i % 10 != 0]
 conv = ['一', '二', '三', '四', '五', '六', '七', '八', '九',
         '１', '２', '３', '４', '５', '６', '７', '８', '９',
-        '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨',
+        'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ',
         '東', '南', '西', '北', '白', '發', '中']
 dic = dict(zip(lst, conv))
 
@@ -113,6 +113,14 @@ class Tehai:
                 return False
         if hai//10 == 4:
             return 2
+        return True
+
+# 緑一色
+    def ryuiso(self):
+        ryuiso = [32, 33, 34, 36, 38, 46]
+        for hai in self.tehai:
+            if hai not in ryuiso:
+                return False
         return True
 
 # チャンタ or 純チャンタ
@@ -336,6 +344,8 @@ if __name__ == '__main__':
                         print("字一色", end=" ")
                     elif chinitsu:
                         print("清一色", end=" ")
+                    if tehai.ryuiso():
+                        print("緑一色", end=" ")
                     print()
             print("\n > ", end="")
             usrinput = input()
