@@ -87,7 +87,7 @@ class Tehai:
             self.__kotsu(t1, tset[::-1], ko)
             self.__syuntsu(t1, tset[::-1], syu)
             if len(ko+syu) == 4:
-                agari.append([[t2]*2]+(ko+syu)[::-1])
+                agari.append([[t2]*2]+(syu+ko)[::-1])
 # 順子優先、順子は正順
             t1 = t.copy()
             ko = []
@@ -103,8 +103,17 @@ class Tehai:
             self.__syuntsu(t1, tset[::-1], syu)
             self.__kotsu(t1, tset[::-1], ko)
             if len(ko+syu) == 4:
-                agari.append([[t2]*2]+(ko+syu)[::-1])
-        return agari
+                agari.append([[t2]*2]+(syu+ko)[::-1])
+        agari2 = []
+        for a in agari:
+            flag = True
+            for a2 in agari2:
+                if a == a2:
+                    flag = False
+                    break
+            if flag:
+                agari2.append(a)
+        return agari2
 
 # タンヤオ
     def tanyao(self):
