@@ -223,9 +223,16 @@ class Tehai:
                         if self.pinfu(a):
                             print("平和", end=" ")
                         chanta = self.chanta(a)
-                        if chanta[0]:
+                        toitoi = self.toitoi(a)
+                        if toitoi:
+                            print("対々和", end=" ")
+                        if chanta[0] and toitoi:
+                            print("清老頭", end=" ")
+                        elif chanta[0] and not toitoi:
                             print("純チャン", end=" ")
-                        elif chanta[1]:
+                        elif chanta[1] and toitoi:
+                            print("混老頭", end=" ")
+                        elif chanta[1] and not toitoi:
                             print("チャンタ", end=" ")
                         sansyoku = self.sansyoku(a)
                         if sansyoku[0]:
@@ -239,15 +246,18 @@ class Tehai:
                             print("一盃口", end=" ")
                         if self.ittsu(a):
                             print("一気通貫", end=" ")
-                        if self.toitoi(a):
-                            print("対々和", end=" ")
                         print()
             return True
 
         if len(self.count_toi()) == 7:
             if flag:
-                print("七対子")
                 print([f"{dic[x]} {dic[x]}" for x in self.count_toi()])
+                print("七対子", end=" ")
+                chanta = self.chanta(a)
+                if chanta[0]:
+                    print("清老頭", end=" ")
+                elif chanta[1]:
+                    print("混老頭", end=" ")
             return True
         return False
 
