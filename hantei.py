@@ -15,14 +15,21 @@ conv = ['一', '二', '三', '四', '五', '六', '七', '八', '九',
 dic = dict(zip(lst, conv))
 
 
+def rndlst(lst):
+    random.shuffle(lst)
+    return lst
+
+
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
 class Tehai:
-    def __init__(self):
-        self.tehai = lst*4
-        random.shuffle(self.tehai)
-        self.tehai = sorted(self.tehai[:14])
-        self.tsumo = self.tehai[13]
+    def __init__(self, lst=rndlst(lst*4)[:14]):
+        if len(lst) not in [13, 14]:
+            return False
+        self.tehai = lst
+        self.tehai[:13] = sorted(self.tehai[:13])
+        if len(lst) == 14:
+            self.tsumo = self.tehai[13]
 
 # 刻子をカウントする
     def __kotsu(self, t, tset, ko):
@@ -224,13 +231,14 @@ class Tehai:
 
 # 平和
     def pinfu(self, lst):
+        pinfu = False
         for p in lst[1:]:
             if p.count(p[0]) != 1:
                 return False
             if self.tsumo in [p[0], p[-1]]:
                 if ((self.tsumo-3) % 10)*((self.tsumo+3) % 10) != 0:
-                    return True
-        return False
+                    pinfu = True
+        return pinfu
 
 
 # あたり牌を検索
@@ -352,7 +360,9 @@ class Tehai:
 # このファイルを実行する時の処理
 if __name__ == '__main__':
 
-    tehai = Tehai()
+    rnd = lst*4
+    random.shuffle(rnd)
+    tehai = Tehai(rnd[:14])
     mode = 2    # mode 1:ツモ 2:切る
     try:
         while True:
