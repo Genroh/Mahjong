@@ -113,7 +113,7 @@ class Tehai:
                 return False
         return True
 
-# チャンタor純チャンタ
+# チャンタ or 純チャンタ
     def chanta(self, lst):
         chanta = [True, True]   # [純チャン, チャンタ]
         for p in lst:
@@ -123,7 +123,7 @@ class Tehai:
                     chanta[1] = False
         return chanta
 
-# 三色同順or三色同刻
+# 三色同順 or 三色同刻
     def sansyoku(self, lst):
         sansyoku = [False, False]
         ones, tens = [], []
@@ -177,6 +177,20 @@ class Tehai:
             if l.count(l[0]) != 3:
                 return False
         return True
+
+# 小三元 or 大三元
+    def sangen(self, lst):
+        count = 0
+        lst = [x for inner in lst for x in inner]
+        for l in range(45, 48):
+            if l in lst:
+                count += 1
+                continue
+        if count != 3:
+            return False
+        if lst[0] in range(45, 48):
+            return True
+        return 2
 
 # 平和
     def pinfu(self, lst):
@@ -246,6 +260,11 @@ class Tehai:
                             print("一盃口", end=" ")
                         if self.ittsu(a):
                             print("一気通貫", end=" ")
+                        sangen = self.sangen(a)
+                        if sangen == 2:
+                            print("大三元", end=" ")
+                        elif sangen:
+                            print("小三元", end=" ")
                         print()
             return True
 
