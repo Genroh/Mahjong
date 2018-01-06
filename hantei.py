@@ -150,6 +150,17 @@ class Tehai:
                 return True
         return False
 
+# 一気通貫
+    def ittsu(self, lst):
+        lst = [x for inner in lst[1:] for x in inner]
+        for i in range(1, 4):
+            for j in range(1, 9):
+                if i*10+j not in lst:
+                    break
+            if i*10+j+1 in lst:
+                return True
+        return False
+
 # 平和
     def pinfu(self, lst):
         for p in lst[1:]:
@@ -212,6 +223,8 @@ class Tehai:
                             print("三色同刻", end=" ")
                         if self.ipeko(a):
                             print("一盃口", end=" ")
+                        if self.ittsu(a):
+                            print("一気通貫", end=" ")
                         print()
             return True
         return False
