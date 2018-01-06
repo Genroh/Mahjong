@@ -245,7 +245,7 @@ if __name__ == '__main__':
     mode = 2    # mode 1:ツモ 2:切る
     try:
         while True:
-            os.system('cls')
+            os.system('clear')
 # 数値と文字の対応表を表示
             print("  ", *[f"{i:2}" for i in range(1, 10)])
             for i in range(4):
