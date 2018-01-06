@@ -15,14 +15,21 @@ conv = ['一', '二', '三', '四', '五', '六', '七', '八', '九',
 dic = dict(zip(lst, conv))
 
 
+def rndlst(lst):
+    random.shuffle(lst)
+    return lst
+
+
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
 class Tehai:
-    def __init__(self):
-        self.tehai = lst*4
-        random.shuffle(self.tehai)
-        self.tehai = sorted(self.tehai[:14])
-        self.tsumo = self.tehai[13]
+    def __init__(self, lst=rndlst(lst*4)[:14]):
+        if len(lst) not in [13, 14]:
+            return False
+        self.tehai = lst
+        self.tehai[:13] = sorted(self.tehai[:13])
+        if len(lst) == 14:
+            self.tsumo = self.tehai[13]
 
 # 刻子をカウントする
     def __kotsu(self, t, tset, ko):
@@ -155,6 +162,16 @@ class Tehai:
                 sansyoku[1] = True
         return sansyoku
 
+# 三暗刻
+    def sananko(self, lst):
+        count = 0
+        for p in lst[1:]:
+            if p.count(p[0]) == 3:
+                count += 1
+        if count >= 3:
+            return True
+        return False
+
 # 一盃口 or 二盃口
     def peko(self, lst):
         peko = []
@@ -173,11 +190,7 @@ class Tehai:
     def ittsu(self, lst):
         lst = [x for inner in lst[1:] for x in inner]
         for i in range(1, 4):
-            flag = True
-            for j in range(1, 10):
-                if i*10+j not in lst:
-                    flag = False
-            if flag:
+            if set(range(i*10+1, i*10+10)) <= set(lst):
                 return True
         return False
 
@@ -202,23 +215,37 @@ class Tehai:
             return True
         return 2
 
+# 小四喜 or 大四喜
+    def sushi(self, lst):
+        count = 0
+        lst = [x for inner in lst for x in inner]
+        for l in range(41, 45):
+            if l in lst:
+                count += 1
+                continue
+        if count != 4:
+            return False
+        if lst[0] in range(41, 45):
+            return True
+        return 2
+
 # 平和
     def pinfu(self, lst):
+        pinfu = False
         for p in lst[1:]:
             if p.count(p[0]) != 1:
                 return False
             if self.tsumo in [p[0], p[-1]]:
                 if ((self.tsumo-3) % 10)*((self.tsumo+3) % 10) != 0:
-                    return True
-        return False
+                    pinfu = True
+        return pinfu
 
 
 # あたり牌を検索
     def atari(self):
         atari = []
         for hai in lst:
-            tehai = Tehai()
-            tehai.tehai = sorted(self.tehai+[hai])
+            tehai = Tehai(sorted(self.tehai+[hai]))
             if tehai.hantei(False):
                 atari.append(dic[hai])
         print("当たり牌:", *atari)
@@ -231,9 +258,19 @@ class Tehai:
                 tmp.append(t)
         if tmp == [11, 19, 21, 29, 31, 39, 41, 42, 43, 44, 45, 46, 47]:
             if flag:
+                print(*[dic[x] for x in self.tehai])
                 print("国士無双")
-                print([dic[x] for x in self.tehai])
             return True
+
+        for i in range(1, 4):
+            if set(self.tehai) != set(range(i*10+1, i*10+10)):
+                continue
+            if self.tehai.count(i*10+1) >= 3 \
+                    and self.tehai.count(i*10+9) >= 3:
+                if flag:
+                    print(*[dic[x] for x in self.tehai])
+                    print("九蓮宝燈")
+                return True
 
         agari = self.analysis()
         if agari:
@@ -243,7 +280,10 @@ class Tehai:
                 for a in agari:
                     if a not in self.agari:
                         self.agari.append(a)
-                        print([" ".join([dic[x] for x in p]) for p in a])
+                        # print([" ".join([dic[x] for x in p]) for p in a])
+                        for p in a:
+                            print("".join([dic[x] for x in p]), end=" ")
+                        print()
                         if self.pinfu(a):
                             print("平和", end=" ")
                         chanta = self.chanta(a)
@@ -275,18 +315,45 @@ class Tehai:
                             print("大三元", end=" ")
                         elif sangen:
                             print("小三元", end=" ")
+                        sushi = self.sushi(a)
+                        if sushi == 2:
+                            print("大四喜", end=" ")
+                        elif sushi:
+                            print("小四喜", end=" ")
+                        if self.sananko(a):
+                            print("三暗刻", end=" ")
+                        if self.tanyao():
+                            print("たんやお", end=" ")
+                        chinitsu = self.chinitsu()
+                        if chinitsu == 2:
+                            print("字一色", end=" ")
+                        elif chinitsu:
+                            print("清一色", end=" ")
+                        if self.ryuiso():
+                            print("緑一色", end=" ")
                         print()
             return True
 
         if len(self.count_toi()) == 7:
             if flag:
-                print([f"{dic[x]} {dic[x]}" for x in self.count_toi()])
+                for x in self.count_toi():
+                    print(dic[x]+dic[x], end=" ")
+                print()
                 print("七対子", end=" ")
-                chanta = self.chanta(a)
+                chanta = self.chanta([[x] for x in self.count_toi()])
                 if chanta[0]:
                     print("清老頭", end=" ")
                 elif chanta[1]:
                     print("混老頭", end=" ")
+                if self.tanyao():
+                    print("たんやお", end=" ")
+                chinitsu = self.chinitsu()
+                if chinitsu == 2:
+                    print("字一色", end=" ")
+                elif chinitsu:
+                    print("清一色", end=" ")
+                if self.ryuiso():
+                    print("緑一色", end=" ")
             return True
         return False
 
@@ -315,7 +382,9 @@ class Tehai:
 # このファイルを実行する時の処理
 if __name__ == '__main__':
 
-    tehai = Tehai()
+    rnd = lst*4
+    random.shuffle(rnd)
+    tehai = Tehai(rnd[:14])
     mode = 2    # mode 1:ツモ 2:切る
     try:
         while True:
@@ -336,17 +405,8 @@ if __name__ == '__main__':
             if mode == 1:
                 tehai.atari()
             if mode == 2:
-                if tehai.hantei(True):
-                    if tehai.tanyao():
-                        print("たんやお", end=" ")
-                    chinitsu = tehai.chinitsu()
-                    if chinitsu == 2:
-                        print("字一色", end=" ")
-                    elif chinitsu:
-                        print("清一色", end=" ")
-                    if tehai.ryuiso():
-                        print("緑一色", end=" ")
-                    print()
+                tehai.hantei(True)
+                print()
             print("\n > ", end="")
             usrinput = input()
 # 'q' または ':q' で終了
