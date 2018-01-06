@@ -10,7 +10,7 @@ import random
 lst = [i for i in range(11, 48) if i % 10 != 0]
 conv = ['一', '二', '三', '四', '五', '六', '七', '八', '九',
         '１', '２', '３', '４', '５', '６', '７', '８', '９',
-        '①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨',
+        'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ',
         '東', '南', '西', '北', '白', '發', '中']
 dic = dict(zip(lst, conv))
 
@@ -106,7 +106,24 @@ class Tehai:
                 return False
         return True
 
-# チャンタor純チャンタ
+# 清一色 or 字一色
+    def chinitsu(self):
+        for hai in self.tehai:
+            if hai//10 != self.tehai[0]//10:
+                return False
+        if hai//10 == 4:
+            return 2
+        return True
+
+# 緑一色
+    def ryuiso(self):
+        ryuiso = [32, 33, 34, 36, 38, 46]
+        for hai in self.tehai:
+            if hai not in ryuiso:
+                return False
+        return True
+
+# チャンタ or 純チャンタ
     def chanta(self, lst):
         chanta = [True, True]   # [純チャン, チャンタ]
         for p in lst:
@@ -116,7 +133,7 @@ class Tehai:
                     chanta[1] = False
         return chanta
 
-# 三色同順or三色同刻
+# 三色同順 or 三色同刻
     def sansyoku(self, lst):
         sansyoku = [False, False]
         ones, tens = [], []
@@ -138,17 +155,52 @@ class Tehai:
                 sansyoku[1] = True
         return sansyoku
 
-# 一盃口
-    def ipeko(self, lst):
-        ipeko = []
+# 一盃口 or 二盃口
+    def peko(self, lst):
+        peko = []
         for p in lst[1:]:
             if p.count(p[0]) == 1:
-                ipeko.append(p)
-        sames = [ipeko.count(x) for x in ipeko]
+                peko.append(p)
+        sames = [peko.count(x) for x in peko]
+        if sames == [2, 2, 2, 2]:
+            return 2
         for i in sames:
             if i >= 2:
                 return True
         return False
+
+# 一気通貫
+    def ittsu(self, lst):
+        lst = [x for inner in lst[1:] for x in inner]
+        for i in range(1, 4):
+            flag = True
+            for j in range(1, 10):
+                if i*10+j not in lst:
+                    flag = False
+            if flag:
+                return True
+        return False
+
+# 対々和
+    def toitoi(self, lst):
+        for l in lst[1:]:
+            if l.count(l[0]) != 3:
+                return False
+        return True
+
+# 小三元 or 大三元
+    def sangen(self, lst):
+        count = 0
+        lst = [x for inner in lst for x in inner]
+        for l in range(45, 48):
+            if l in lst:
+                count += 1
+                continue
+        if count != 3:
+            return False
+        if lst[0] in range(45, 48):
+            return True
+        return 2
 
 # 平和
     def pinfu(self, lst):
@@ -183,12 +235,6 @@ class Tehai:
                 print([dic[x] for x in self.tehai])
             return True
 
-        if len(self.count_toi()) == 7:
-            if flag:
-                print("七対子")
-                print([f"{dic[x]} {dic[x]}" for x in self.count_toi()])
-            return True
-
         agari = self.analysis()
         if agari:
             if flag:
@@ -201,18 +247,46 @@ class Tehai:
                         if self.pinfu(a):
                             print("平和", end=" ")
                         chanta = self.chanta(a)
-                        if chanta[0]:
+                        toitoi = self.toitoi(a)
+                        if toitoi:
+                            print("対々和", end=" ")
+                        if chanta[0] and toitoi:
+                            print("清老頭", end=" ")
+                        elif chanta[0] and not toitoi:
                             print("純チャン", end=" ")
-                        elif chanta[1]:
+                        elif chanta[1] and toitoi:
+                            print("混老頭", end=" ")
+                        elif chanta[1] and not toitoi:
                             print("チャンタ", end=" ")
                         sansyoku = self.sansyoku(a)
                         if sansyoku[0]:
                             print("三色同順", end=" ")
                         elif sansyoku[1]:
                             print("三色同刻", end=" ")
-                        if self.ipeko(a):
+                        peko = self.peko(a)
+                        if peko == 2:
+                            print("二盃口", end=" ")
+                        elif peko:
                             print("一盃口", end=" ")
+                        if self.ittsu(a):
+                            print("一気通貫", end=" ")
+                        sangen = self.sangen(a)
+                        if sangen == 2:
+                            print("大三元", end=" ")
+                        elif sangen:
+                            print("小三元", end=" ")
                         print()
+            return True
+
+        if len(self.count_toi()) == 7:
+            if flag:
+                print([f"{dic[x]} {dic[x]}" for x in self.count_toi()])
+                print("七対子", end=" ")
+                chanta = self.chanta(a)
+                if chanta[0]:
+                    print("清老頭", end=" ")
+                elif chanta[1]:
+                    print("混老頭", end=" ")
             return True
         return False
 
@@ -265,6 +339,13 @@ if __name__ == '__main__':
                 if tehai.hantei(True):
                     if tehai.tanyao():
                         print("たんやお", end=" ")
+                    chinitsu = tehai.chinitsu()
+                    if chinitsu == 2:
+                        print("字一色", end=" ")
+                    elif chinitsu:
+                        print("清一色", end=" ")
+                    if tehai.ryuiso():
+                        print("緑一色", end=" ")
                     print()
             print("\n > ", end="")
             usrinput = input()
