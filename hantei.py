@@ -363,6 +363,7 @@ class Tehai:
                     print("清一色", end=" ")
                 if self.ryuiso():
                     print("緑一色", end=" ")
+                print()
             return True
         return False
 
