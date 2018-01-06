@@ -259,6 +259,16 @@ class Tehai:
                 print([dic[x] for x in self.tehai])
             return True
 
+        for i in range(1, 4):
+            if set(self.tehai) != set(range(i*10+1, i*10+10)):
+                continue
+            if self.tehai.count(i*10+1) >= 3 \
+                    and self.tehai.count(i*10+9) >= 3:
+                if flag:
+                    print("九蓮宝燈")
+                    print([dic[x] for x in self.tehai])
+                return True
+
         agari = self.analysis()
         if agari:
             if flag:
