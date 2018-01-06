@@ -161,6 +161,13 @@ class Tehai:
                 return True
         return False
 
+# 対々和
+    def toitoi(self, lst):
+        for l in lst[1:]:
+            if l.count(l[0]) != 3:
+                return False
+        return True
+
 # 平和
     def pinfu(self, lst):
         for p in lst[1:]:
@@ -225,6 +232,8 @@ class Tehai:
                             print("一盃口", end=" ")
                         if self.ittsu(a):
                             print("一気通貫", end=" ")
+                        if self.toitoi(a):
+                            print("対々和", end=" ")
                         print()
             return True
         return False
