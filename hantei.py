@@ -138,13 +138,15 @@ class Tehai:
                 sansyoku[1] = True
         return sansyoku
 
-# 一盃口
-    def ipeko(self, lst):
-        ipeko = []
+# 一盃口 or 二盃口
+    def peko(self, lst):
+        peko = []
         for p in lst[1:]:
             if p.count(p[0]) == 1:
-                ipeko.append(p)
-        sames = [ipeko.count(x) for x in ipeko]
+                peko.append(p)
+        sames = [peko.count(x) for x in peko]
+        if sames == [2, 2, 2, 2]:
+            return 2
         for i in sames:
             if i >= 2:
                 return True
@@ -154,10 +156,11 @@ class Tehai:
     def ittsu(self, lst):
         lst = [x for inner in lst[1:] for x in inner]
         for i in range(1, 4):
-            for j in range(1, 9):
+            flag = True
+            for j in range(1, 10):
                 if i*10+j not in lst:
-                    break
-            if i*10+j+1 in lst:
+                    flag = False
+            if flag:
                 return True
         return False
 
@@ -201,12 +204,6 @@ class Tehai:
                 print([dic[x] for x in self.tehai])
             return True
 
-        if len(self.count_toi()) == 7:
-            if flag:
-                print("七対子")
-                print([f"{dic[x]} {dic[x]}" for x in self.count_toi()])
-            return True
-
         agari = self.analysis()
         if agari:
             if flag:
@@ -228,13 +225,22 @@ class Tehai:
                             print("三色同順", end=" ")
                         elif sansyoku[1]:
                             print("三色同刻", end=" ")
-                        if self.ipeko(a):
+                        peko = self.peko(a)
+                        if peko == 2:
+                            print("二盃口", end=" ")
+                        elif peko:
                             print("一盃口", end=" ")
                         if self.ittsu(a):
                             print("一気通貫", end=" ")
                         if self.toitoi(a):
                             print("対々和", end=" ")
                         print()
+            return True
+
+        if len(self.count_toi()) == 7:
+            if flag:
+                print("七対子")
+                print([f"{dic[x]} {dic[x]}" for x in self.count_toi()])
             return True
         return False
 
