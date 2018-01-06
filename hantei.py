@@ -202,6 +202,20 @@ class Tehai:
             return True
         return 2
 
+# 小四喜 or 大四喜
+    def sushi(self, lst):
+        count = 0
+        lst = [x for inner in lst for x in inner]
+        for l in range(41, 45):
+            if l in lst:
+                count += 1
+                continue
+        if count != 4:
+            return False
+        if lst[0] in range(41, 45):
+            return True
+        return 2
+
 # 平和
     def pinfu(self, lst):
         for p in lst[1:]:
@@ -275,6 +289,11 @@ class Tehai:
                             print("大三元", end=" ")
                         elif sangen:
                             print("小三元", end=" ")
+                        sushi = self.sushi(a)
+                        if sushi == 2:
+                            print("大四喜", end=" ")
+                        elif sushi:
+                            print("小四喜", end=" ")
                         print()
             return True
 
