@@ -245,8 +245,7 @@ class Tehai:
     def atari(self):
         atari = []
         for hai in lst:
-            tehai = Tehai()
-            tehai.tehai = sorted(self.tehai+[hai])
+            tehai = Tehai(sorted(self.tehai+[hai]))
             if tehai.hantei(False):
                 atari.append(dic[hai])
         print("当たり牌:", *atari)
@@ -259,8 +258,8 @@ class Tehai:
                 tmp.append(t)
         if tmp == [11, 19, 21, 29, 31, 39, 41, 42, 43, 44, 45, 46, 47]:
             if flag:
+                print(*[dic[x] for x in self.tehai])
                 print("国士無双")
-                print([dic[x] for x in self.tehai])
             return True
 
         for i in range(1, 4):
@@ -269,8 +268,8 @@ class Tehai:
             if self.tehai.count(i*10+1) >= 3 \
                     and self.tehai.count(i*10+9) >= 3:
                 if flag:
+                    print(*[dic[x] for x in self.tehai])
                     print("九蓮宝燈")
-                    print([dic[x] for x in self.tehai])
                 return True
 
         agari = self.analysis()
@@ -281,7 +280,10 @@ class Tehai:
                 for a in agari:
                     if a not in self.agari:
                         self.agari.append(a)
-                        print([" ".join([dic[x] for x in p]) for p in a])
+                        # print([" ".join([dic[x] for x in p]) for p in a])
+                        for p in a:
+                            print("".join([dic[x] for x in p]), end=" ")
+                        print()
                         if self.pinfu(a):
                             print("平和", end=" ")
                         chanta = self.chanta(a)
@@ -320,18 +322,38 @@ class Tehai:
                             print("小四喜", end=" ")
                         if self.sananko(a):
                             print("三暗刻", end=" ")
+                        if self.tanyao():
+                            print("たんやお", end=" ")
+                        chinitsu = self.chinitsu()
+                        if chinitsu == 2:
+                            print("字一色", end=" ")
+                        elif chinitsu:
+                            print("清一色", end=" ")
+                        if self.ryuiso():
+                            print("緑一色", end=" ")
                         print()
             return True
 
         if len(self.count_toi()) == 7:
             if flag:
-                print([f"{dic[x]} {dic[x]}" for x in self.count_toi()])
+                for x in self.count_toi():
+                    print(dic[x]+dic[x], end=" ")
+                print()
                 print("七対子", end=" ")
-                chanta = self.chanta(a)
+                chanta = self.chanta([[x] for x in self.count_toi()])
                 if chanta[0]:
                     print("清老頭", end=" ")
                 elif chanta[1]:
                     print("混老頭", end=" ")
+                if self.tanyao():
+                    print("たんやお", end=" ")
+                chinitsu = self.chinitsu()
+                if chinitsu == 2:
+                    print("字一色", end=" ")
+                elif chinitsu:
+                    print("清一色", end=" ")
+                if self.ryuiso():
+                    print("緑一色", end=" ")
             return True
         return False
 
@@ -383,17 +405,8 @@ if __name__ == '__main__':
             if mode == 1:
                 tehai.atari()
             if mode == 2:
-                if tehai.hantei(True):
-                    if tehai.tanyao():
-                        print("たんやお", end=" ")
-                    chinitsu = tehai.chinitsu()
-                    if chinitsu == 2:
-                        print("字一色", end=" ")
-                    elif chinitsu:
-                        print("清一色", end=" ")
-                    if tehai.ryuiso():
-                        print("緑一色", end=" ")
-                    print()
+                tehai.hantei(True)
+                print()
             print("\n > ", end="")
             usrinput = input()
 # 'q' または ':q' で終了
