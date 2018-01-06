@@ -106,11 +106,13 @@ class Tehai:
                 return False
         return True
 
-# 清一色
+# 清一色 or 字一色
     def chinitsu(self):
         for hai in self.tehai:
             if hai//10 != self.tehai[0]//10:
                 return False
+        if hai//10 == 4:
+            return 2
         return True
 
 # チャンタ or 純チャンタ
@@ -329,7 +331,10 @@ if __name__ == '__main__':
                 if tehai.hantei(True):
                     if tehai.tanyao():
                         print("たんやお", end=" ")
-                    if tehai.chinitsu():
+                    chinitsu = tehai.chinitsu()
+                    if chinitsu == 2:
+                        print("字一色", end=" ")
+                    elif chinitsu:
                         print("清一色", end=" ")
                     print()
             print("\n > ", end="")
