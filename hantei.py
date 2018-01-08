@@ -6,6 +6,7 @@
 import os
 import sys
 import random
+import pdb
 
 # 牌に使う数値と文字の対応
 lst = [i for i in range(11, 48) if i % 10 != 0]
@@ -260,7 +261,7 @@ class Tehai:
 
 # 平和
     def pinfu(self, lst):
-        if self.furo:
+        if self.furo or lst[0][0] in range(45, 48):
             return False
         pinfu = False
         for p in lst[1:]:
@@ -404,7 +405,7 @@ class Tehai:
 # 手牌を切る
     def pop(self, hai):
         if hai < 0 or hai > 13:
-            return False
+            return None
         pop = self.tehai.pop(hai)
         self.tsumo = None
         self.tehai.sort()
@@ -489,14 +490,39 @@ if __name__ == '__main__':
             if usrinput == 'debug':
                 mode = 2
                 continue
+# 'furo' でツモ牌で鳴く
+            if usrinput == 'furo' and mode != 1:
+                furable = []
+                if set([tehai.tsumo-2, tehai.tsumo-1]) <= set(tehai.tehai):
+                    furable.append([tehai.tsumo-2, tehai.tsumo-1])
+                if set([tehai.tsumo+1, tehai.tsumo+2]) <= set(tehai.tehai):
+                    furable.append([tehai.tsumo+1, tehai.tsumo+2])
+                if tehai.tehai.count(tehai.tsumo) >= 3:
+                    furable.append([tehai.tsumo, tehai.tsumo])
+                for i in range(len(furable)):
+                    print(i, furable[i])
+                while True:
+                    print(" > ", end="")
+                    usrinput = input()
+                    if usrinput.isdigit():
+                        if int(usrinput) in set(range(len(furable))):
+                            break
+                tehai.furo.append(furable[int(usrinput)]+[tehai.tsumo])
+                for f in furable[int(usrinput)]+[tehai.tsumo]:
+                    tehai.tehai.remove(f)
+                tehai.tsumo = None
+                continue
+# それ以外で数値でなければ弾く
             if not usrinput.isdigit():
                 continue
             if mode == 1:
                 if tehai.set(int(usrinput)):
                     mode = 2
             elif mode in [2, 3]:
-                turn += 1
                 pop = tehai.pop(int(usrinput))
+                if not pop:
+                    continue
+                turn += 1
                 ho.append(pop)
                 if mode == 2:
                     mode = 1
