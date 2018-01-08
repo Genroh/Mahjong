@@ -19,17 +19,30 @@ def rndlst(lst):
     random.shuffle(lst)
     return lst
 
+def rndtsumo(tehai):
+    tsumo = lst*4
+    for te in tehai.tehai+[x for y in tehai.furo for x in y]:
+        tsumo.remove(te)
+    tehai.set(random.choice(tsumo))
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
 class Tehai:
-    def __init__(self, lst=rndlst(lst*4)[:14]):
-        if len(lst) not in [13, 14]:
-            return False
-        self.tehai = lst
-        self.tehai[:13] = sorted(self.tehai[:13])
-        if len(lst) == 14:
-            self.tsumo = self.tehai[13]
+    def __init__(self, te=None, furo=[]):
+        if not te:
+            te = rndlst(lst*4)[:14]
+        if len(te)+len(furo)*3 not in [13, 14]:
+            print("size error")
+            return None
+        if len(te)+len(furo)*3 == 13:
+            self.tehai = sorted(te)
+            self.furo = furo
+            self.tsumo = None
+        if len(te)+len(furo)*3 == 14:
+            self.tehai = te
+            self.tehai[:-1] = sorted(self.tehai[:-1])
+            self.furo = furo
+            self.tsumo = self.tehai[-1]
 
 # 刻子をカウントする
     def __kotsu(self, t, tset, ko):
@@ -78,7 +91,7 @@ class Tehai:
             syu = []
             self.__kotsu(t1, tset, ko)
             self.__syuntsu(t1, tset, syu)
-            if len(ko+syu) == 4:
+            if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+ko+syu)
 # 刻子優先、順子は逆順
             t1 = t.copy()
@@ -86,7 +99,7 @@ class Tehai:
             syu = []
             self.__kotsu(t1, tset[::-1], ko)
             self.__syuntsu(t1, tset[::-1], syu)
-            if len(ko+syu) == 4:
+            if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+(syu+ko)[::-1])
 # 順子優先、順子は正順
             t1 = t.copy()
@@ -94,7 +107,7 @@ class Tehai:
             syu = []
             self.__syuntsu(t1, tset, syu)
             self.__kotsu(t1, tset, ko)
-            if len(ko+syu) == 4:
+            if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+ko+syu)
 # 順子優先、順子は逆順
             t1 = t.copy()
@@ -102,7 +115,7 @@ class Tehai:
             syu = []
             self.__syuntsu(t1, tset[::-1], syu)
             self.__kotsu(t1, tset[::-1], ko)
-            if len(ko+syu) == 4:
+            if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+(syu+ko)[::-1])
         agari2 = []
         for a in agari:
@@ -117,14 +130,14 @@ class Tehai:
 
 # タンヤオ
     def tanyao(self):
-        for hai in self.tehai:
+        for hai in self.tehai + [x for inner in self.furo for x in inner]:
             if hai//10 == 4 or hai % 10 == 1 or hai % 10 == 9:
                 return False
         return True
 
 # 清一色 or 字一色
     def chinitsu(self):
-        for hai in self.tehai:
+        for hai in self.tehai + [x for inner in self.furo for x in inner]:
             if hai//10 != self.tehai[0]//10:
                 return False
         if hai//10 == 4:
@@ -183,6 +196,8 @@ class Tehai:
 
 # 一盃口 or 二盃口
     def peko(self, lst):
+        if self.furo:
+            return False
         peko = []
         for p in lst[1:]:
             if p.count(p[0]) == 1:
@@ -240,13 +255,16 @@ class Tehai:
 
 # 平和
     def pinfu(self, lst):
+        if self.furo:
+            return False
         pinfu = False
         for p in lst[1:]:
             if p.count(p[0]) != 1:
                 return False
             if self.tsumo in [p[0], p[-1]]:
-                if ((self.tsumo-3) % 10)*((self.tsumo+3) % 10) != 0:
-                    pinfu = True
+                if [x % 10 for x in p if self.tsumo != x] in [[1, 2], [8, 9]]:
+                    return False
+                pinfu = True
         return pinfu
 
 
@@ -289,7 +307,7 @@ class Tehai:
                 for a in agari:
                     if a not in self.agari:
                         self.agari.append(a)
-                        # print([" ".join([dic[x] for x in p]) for p in a])
+                        a.extend(self.furo)
                         for p in a:
                             print("".join([dic[x] for x in p]), end=" ")
                         print()
@@ -386,16 +404,23 @@ class Tehai:
 
 # 手牌を対応する文字に変換
     def conv(self):
-        return [dic[x] for x in self.tehai]
+        tehai = [dic[x] for x in self.tehai]
+        furo = [[dic[x] for x in f] for f in self.furo]
+        allfuro = ""
+        for f in furo:
+            allfuro += "," + "".join(f)
+        return "".join(tehai) + allfuro
+
+# 手牌と副露牌をまとめたやーつ
+    def getAll(self):
+        return self.tehai + [x for inner in self.furo for x in inner]
 
 
 # このファイルを実行する時の処理
 if __name__ == '__main__':
 
-    rnd = lst*4
-    random.shuffle(rnd)
-    tehai = Tehai(rnd[:14])
-    mode = 2    # mode 1:ツモ 2:切る
+    tehai = Tehai()
+    mode = 2    # mode 1:ツモ 2:切る 3:ランダムツモ
     try:
         while True:
             os.system('clear')
@@ -412,9 +437,9 @@ if __name__ == '__main__':
             print()
             print("対子:", *[dic[x] for x in tehai.count_toi()])
             print()
-            if mode == 1:
+            if mode in [1]:
                 tehai.atari()
-            if mode == 2:
+            if mode in [2, 3]:
                 tehai.hantei(True)
                 print()
             print("\n > ", end="")
@@ -422,6 +447,17 @@ if __name__ == '__main__':
 # 'q' または ':q' で終了
             if usrinput == 'q' or usrinput == ':q':
                 break
+# 'r' でリセット
+            if usrinput == 'r':
+                tehai = Tehai()
+                mode = 2
+                continue
+# 'random' でランダムツモモード
+            if usrinput == 'random':
+                if mode == 1:
+                    rndtsumo(tehai)
+                mode = 3
+                continue
             if not usrinput.isdigit():
                 continue
             if mode == 1:
@@ -430,6 +466,10 @@ if __name__ == '__main__':
             elif mode == 2:
                 if tehai.pop(int(usrinput)):
                     mode = 1
+            elif mode == 3:
+                if not tehai.pop(int(usrinput)):
+                    continue
+                rndtsumo(tehai)
 # Ctrl+C で終了
     except KeyboardInterrupt:
         print()
