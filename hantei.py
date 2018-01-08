@@ -19,11 +19,18 @@ def rndlst(lst):
     random.shuffle(lst)
     return lst
 
+def rndtsumo(tehai):
+    tsumo = lst*4
+    for te in tehai.tehai+[x for y in tehai.furo for x in y]:
+        tsumo.remove(te)
+    tehai.set(random.choice(tsumo))
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
 class Tehai:
-    def __init__(self, te=rndlst(lst*4)[:14], furo=[]):
+    def __init__(self, te=None, furo=[]):
+        if not te:
+            te = rndlst(lst*4)[:14]
         if len(te)+len(furo)*3 not in [13, 14]:
             print("size error")
             return None
@@ -412,10 +419,8 @@ class Tehai:
 # このファイルを実行する時の処理
 if __name__ == '__main__':
 
-    rnd = lst*4
-    random.shuffle(rnd)
-    tehai = Tehai(rnd[:14])
-    mode = 2    # mode 1:ツモ 2:切る
+    tehai = Tehai()
+    mode = 2    # mode 1:ツモ 2:切る 3:ランダムツモ
     try:
         while True:
             os.system('clear')
@@ -432,9 +437,9 @@ if __name__ == '__main__':
             print()
             print("対子:", *[dic[x] for x in tehai.count_toi()])
             print()
-            if mode == 1:
+            if mode in [1]:
                 tehai.atari()
-            if mode == 2:
+            if mode in [2, 3]:
                 tehai.hantei(True)
                 print()
             print("\n > ", end="")
@@ -442,6 +447,17 @@ if __name__ == '__main__':
 # 'q' または ':q' で終了
             if usrinput == 'q' or usrinput == ':q':
                 break
+# 'r' でリセット
+            if usrinput == 'r':
+                tehai = Tehai()
+                mode = 2
+                continue
+# 'random' でランダムツモモード
+            if usrinput == 'random':
+                if mode == 1:
+                    rndtsumo(tehai)
+                mode = 3
+                continue
             if not usrinput.isdigit():
                 continue
             if mode == 1:
@@ -450,6 +466,10 @@ if __name__ == '__main__':
             elif mode == 2:
                 if tehai.pop(int(usrinput)):
                     mode = 1
+            elif mode == 3:
+                if not tehai.pop(int(usrinput)):
+                    continue
+                rndtsumo(tehai)
 # Ctrl+C で終了
     except KeyboardInterrupt:
         print()
