@@ -19,6 +19,11 @@ def rndlst(lst):
     random.shuffle(lst)
     return lst
 
+def rndtsumo(tehai):
+    tsumo = lst*4
+    for te in tehai.tehai+[x for y in tehai.furo for x in y]:
+        tsumo.remove(te)
+    tehai.set(random.choice(tsumo))
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -449,6 +454,8 @@ if __name__ == '__main__':
                 continue
 # 'random' でランダムツモモード
             if usrinput == 'random':
+                if mode == 1:
+                    rndtsumo(tehai)
                 mode = 3
                 continue
             if not usrinput.isdigit():
@@ -462,10 +469,7 @@ if __name__ == '__main__':
             elif mode == 3:
                 if not tehai.pop(int(usrinput)):
                     continue
-                tsumo = lst*4
-                for te in tehai.tehai+[x for y in tehai.furo for x in y]:
-                    tsumo.remove(te)
-                tehai.set(random.choice(tsumo))
+                rndtsumo(tehai)
 # Ctrl+C で終了
     except KeyboardInterrupt:
         print()
