@@ -123,14 +123,14 @@ class Tehai:
 
 # タンヤオ
     def tanyao(self):
-        for hai in self.tehai:
+        for hai in self.tehai + [x for inner in self.furo for x in inner]:
             if hai//10 == 4 or hai % 10 == 1 or hai % 10 == 9:
                 return False
         return True
 
 # 清一色 or 字一色
     def chinitsu(self):
-        for hai in self.tehai:
+        for hai in self.tehai + [x for inner in self.furo for x in inner]:
             if hai//10 != self.tehai[0]//10:
                 return False
         if hai//10 == 4:
