@@ -4,6 +4,7 @@
 # Written By python 3.6.1
 
 import os
+import sys
 import random
 
 # 牌に使う数値と文字の対応
@@ -19,11 +20,13 @@ def rndlst(lst):
     random.shuffle(lst)
     return lst
 
+
 def rndtsumo(tehai):
     tsumo = lst*4
     for te in tehai.tehai+[x for y in tehai.furo for x in y]:
         tsumo.remove(te)
     tehai.set(random.choice(tsumo))
+
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -423,7 +426,10 @@ if __name__ == '__main__':
     mode = 2    # mode 1:ツモ 2:切る 3:ランダムツモ
     try:
         while True:
-            os.system('clear')
+            if sys.platform == 'win32':
+                os.system('cls')
+            else:
+                os.system('clear')
 # 数値と文字の対応表を表示
             print("  ", *[f"{i:2}" for i in range(1, 10)])
             for i in range(4):
