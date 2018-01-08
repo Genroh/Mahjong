@@ -500,7 +500,7 @@ if __name__ == '__main__':
                 if tehai.tehai.count(tehai.tsumo) >= 3:
                     furable.append([tehai.tsumo, tehai.tsumo])
                 for i in range(len(furable)):
-                    print(i, furable[i])
+                    print(i, *[dic[x] for x in furable[i]])
                 while True:
                     print(" > ", end="")
                     usrinput = input()
