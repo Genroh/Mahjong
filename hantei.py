@@ -189,6 +189,8 @@ class Tehai:
 
 # 一盃口 or 二盃口
     def peko(self, lst):
+        if self.furo:
+            return False
         peko = []
         for p in lst[1:]:
             if p.count(p[0]) == 1:
@@ -246,6 +248,8 @@ class Tehai:
 
 # 平和
     def pinfu(self, lst):
+        if self.furo:
+            return False
         pinfu = False
         for p in lst[1:]:
             if p.count(p[0]) != 1:
@@ -296,11 +300,9 @@ class Tehai:
                 for a in agari:
                     if a not in self.agari:
                         self.agari.append(a)
-                        # print([" ".join([dic[x] for x in p]) for p in a])
+                        a.extend(self.furo)
                         for p in a:
                             print("".join([dic[x] for x in p]), end=" ")
-                        for f in self.furo:
-                            print("".join([dic[x] for x in f]), end=" ")
                         print()
                         if self.pinfu(a):
                             print("平和", end=" ")
