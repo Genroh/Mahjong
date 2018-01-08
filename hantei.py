@@ -21,9 +21,9 @@ def rndlst(lst):
     return lst
 
 
-def rndtsumo(tehai):
+def rndtsumo(tehai, sute):
     tsumo = lst*4
-    for te in tehai.tehai+[x for y in tehai.furo for x in y]:
+    for te in tehai.tehai+[x for y in tehai.furo for x in y]+sute:
         tsumo.remove(te)
     tehai.set(random.choice(tsumo))
 
@@ -400,10 +400,10 @@ class Tehai:
     def pop(self, hai):
         if hai < 0 or hai > 13:
             return False
-        self.tehai.pop(hai)
+        pop = self.tehai.pop(hai)
         self.tsumo = None
         self.tehai.sort()
-        return True
+        return pop
 
 # 手牌を対応する文字に変換
     def conv(self):
@@ -423,6 +423,7 @@ class Tehai:
 if __name__ == '__main__':
 
     tehai = Tehai()
+    sute = []
     turn = 0
     mode = 3    # mode 1:ツモ 2:切る 3:ランダムツモ
     modedic = {1: "ツモ", 2: "切る", 3: "ランダムツモ"}
@@ -444,8 +445,11 @@ if __name__ == '__main__':
             print(*[f"{x:02}" for x in range(14)])
             print(*tehai.conv())
             print()
-            print("対子:", *[dic[x] for x in tehai.count_toi()])
-            print()
+            # print("対子:", *[dic[x] for x in tehai.count_toi()])
+            # print()
+            print("河:")
+            for i in range(len(sute)//6+1):
+                print(*[dic[x] for x in sute[i*6:(i+1)*6]])
             if mode in [1]:
                 tehai.atari()
             if mode in [2, 3]:
@@ -479,9 +483,9 @@ if __name__ == '__main__':
                 if tehai.pop(int(usrinput)):
                     mode = 1
             elif mode == 3:
-                if not tehai.pop(int(usrinput)):
-                    continue
-                rndtsumo(tehai)
+                pop = tehai.pop(int(usrinput))
+                sute.append(pop)
+                rndtsumo(tehai, sute)
                 turn += 1
 # Ctrl+C で終了
     except KeyboardInterrupt:
