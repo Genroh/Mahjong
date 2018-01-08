@@ -6,6 +6,7 @@
 import os
 import sys
 import random
+import pdb
 
 # 牌に使う数値と文字の対応
 lst = [i for i in range(11, 48) if i % 10 != 0]
@@ -21,9 +22,9 @@ def rndlst(lst):
     return lst
 
 
-def rndtsumo(tehai):
+def rndtsumo(tehai, ho):
     tsumo = lst*4
-    for te in tehai.tehai+[x for y in tehai.furo for x in y]:
+    for te in tehai.tehai+[x for y in tehai.furo for x in y]+ho:
         tsumo.remove(te)
     tehai.set(random.choice(tsumo))
 
@@ -188,13 +189,15 @@ class Tehai:
         return sansyoku
 
 # 三暗刻
-    def sananko(self, lst):
+    def anko(self, lst):
         count = 0
         for p in lst[1:]:
             if p.count(p[0]) == 3:
                 count += 1
-        if count >= 3:
+        if count == 3:
             return True
+        elif count == 4:
+            return 2
         return False
 
 # 一盃口 or 二盃口
@@ -258,7 +261,7 @@ class Tehai:
 
 # 平和
     def pinfu(self, lst):
-        if self.furo:
+        if self.furo or lst[0][0] in range(45, 48):
             return False
         pinfu = False
         for p in lst[1:]:
@@ -277,8 +280,8 @@ class Tehai:
         for hai in lst:
             tehai = Tehai(sorted(self.tehai+[hai]))
             if tehai.hantei(False):
-                atari.append(dic[hai])
-        print("当たり牌:", *atari)
+                atari.append(hai)
+        return atari
 
 # アガリ状態かどうか判定する
     def hantei(self, flag):
@@ -350,7 +353,10 @@ class Tehai:
                             print("大四喜", end=" ")
                         elif sushi:
                             print("小四喜", end=" ")
-                        if self.sananko(a):
+                        anko = self.anko([x for x in a if x not in self.furo])
+                        if anko == 2:
+                            print("四暗刻", end=" ")
+                        elif anko:
                             print("三暗刻", end=" ")
                         if self.tanyao():
                             print("たんやお", end=" ")
@@ -399,11 +405,11 @@ class Tehai:
 # 手牌を切る
     def pop(self, hai):
         if hai < 0 or hai > 13:
-            return False
-        self.tehai.pop(hai)
+            return None
+        pop = self.tehai.pop(hai)
         self.tsumo = None
         self.tehai.sort()
-        return True
+        return pop
 
 # 手牌を対応する文字に変換
     def conv(self):
@@ -423,7 +429,10 @@ class Tehai:
 if __name__ == '__main__':
 
     tehai = Tehai()
-    mode = 2    # mode 1:ツモ 2:切る 3:ランダムツモ
+    ho = []
+    turn = 0
+    mode = 3    # mode 1:ツモ 2:切る 3:ランダムツモ
+    modedic = {1: "ツモ", 2: "切る", 3: "ランダムツモ"}
     try:
         while True:
             if sys.platform == 'win32':
@@ -436,17 +445,27 @@ if __name__ == '__main__':
                 print(f"{(i+1)*10}", *conv[i*9:(i+1)*9])
             print()
 # モード表示
-            print("mode =", mode)
+            print("mode =", modedic[mode])
+            print("turn =", turn)
             print()
             print(*[f"{x:02}" for x in range(14)])
             print(*tehai.conv())
             print()
-            print("対子:", *[dic[x] for x in tehai.count_toi()])
+            # print("対子:", *[dic[x] for x in tehai.count_toi()])
+            # print()
+            print("河:")
+            for i in range(len(ho)//6+1):
+                print(*[dic[x] for x in ho[i*6:(i+1)*6]])
             print()
             if mode in [1]:
-                tehai.atari()
+                atari = tehai.atari()
+                print("当たり牌:", *[dic[x] for x in atari])
             if mode in [2, 3]:
-                tehai.hantei(True)
+                if tehai.hantei(True):
+                    furi = Tehai(tehai.tehai[:-1], tehai.furo)
+                    for f in furi.atari():
+                        if f in ho:
+                            print("フリテン")
                 print()
             print("\n > ", end="")
             usrinput = input()
@@ -456,26 +475,60 @@ if __name__ == '__main__':
 # 'r' でリセット
             if usrinput == 'r':
                 tehai = Tehai()
-                mode = 2
+                ho = []
+                turn = 0
+                if mode == 1:
+                    mode = 2
                 continue
 # 'random' でランダムツモモード
             if usrinput == 'random':
-                if mode == 1:
-                    rndtsumo(tehai)
+                tehai = Tehai()
+                ho = []
+                turn = 0
                 mode = 3
                 continue
+            if usrinput == 'debug':
+                mode = 2
+                continue
+# 'furo' でツモ牌で鳴く
+            if usrinput == 'furo' and mode != 1:
+                furable = []
+                if set([tehai.tsumo-2, tehai.tsumo-1]) <= set(tehai.tehai):
+                    furable.append([tehai.tsumo-2, tehai.tsumo-1])
+                if set([tehai.tsumo+1, tehai.tsumo+2]) <= set(tehai.tehai):
+                    furable.append([tehai.tsumo+1, tehai.tsumo+2])
+                if tehai.tehai.count(tehai.tsumo) >= 3:
+                    furable.append([tehai.tsumo, tehai.tsumo])
+                for i in range(len(furable)):
+                    print(i, *[dic[x] for x in furable[i]])
+                while True:
+                    print(" > ", end="")
+                    usrinput = input()
+                    if usrinput.isdigit():
+                        if int(usrinput) in set(range(len(furable))):
+                            break
+                tehai.furo.append(furable[int(usrinput)]+[tehai.tsumo])
+                for f in furable[int(usrinput)]+[tehai.tsumo]:
+                    tehai.tehai.remove(f)
+                tehai.tsumo = None
+                continue
+# それ以外で数値でなければ弾く
             if not usrinput.isdigit():
                 continue
             if mode == 1:
                 if tehai.set(int(usrinput)):
                     mode = 2
-            elif mode == 2:
-                if tehai.pop(int(usrinput)):
-                    mode = 1
-            elif mode == 3:
-                if not tehai.pop(int(usrinput)):
+            elif mode in [2, 3]:
+                pop = tehai.pop(int(usrinput))
+                if not pop:
                     continue
-                rndtsumo(tehai)
+                turn += 1
+                ho.append(pop)
+                if mode == 2:
+                    mode = 1
+                    continue
+                elif mode == 3:
+                    rndtsumo(tehai, ho)
 # Ctrl+C で終了
     except KeyboardInterrupt:
         print()
