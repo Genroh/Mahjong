@@ -188,13 +188,15 @@ class Tehai:
         return sansyoku
 
 # 三暗刻
-    def sananko(self, lst):
+    def anko(self, lst):
         count = 0
         for p in lst[1:]:
             if p.count(p[0]) == 3:
                 count += 1
-        if count >= 3:
+        if count == 3:
             return True
+        elif count == 4:
+            return 2
         return False
 
 # 一盃口 or 二盃口
@@ -350,7 +352,10 @@ class Tehai:
                             print("大四喜", end=" ")
                         elif sushi:
                             print("小四喜", end=" ")
-                        if self.sananko(a):
+                        anko = self.anko([x for x in a if x not in self.furo])
+                        if anko == 2:
+                            print("四暗刻", end=" ")
+                        elif anko:
                             print("三暗刻", end=" ")
                         if self.tanyao():
                             print("たんやお", end=" ")
