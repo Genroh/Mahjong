@@ -245,8 +245,9 @@ class Tehai:
             if p.count(p[0]) != 1:
                 return False
             if self.tsumo in [p[0], p[-1]]:
-                if ((self.tsumo-3) % 10)*((self.tsumo+3) % 10) != 0:
-                    pinfu = True
+                if [x % 10 for x in p if self.tsumo != x] in [[1, 2], [8, 9]]:
+                    return False
+                pinfu = True
         return pinfu
 
 
