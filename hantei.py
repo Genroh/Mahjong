@@ -423,7 +423,9 @@ class Tehai:
 if __name__ == '__main__':
 
     tehai = Tehai()
-    mode = 2    # mode 1:ツモ 2:切る 3:ランダムツモ
+    turn = 0
+    mode = 3    # mode 1:ツモ 2:切る 3:ランダムツモ
+    modedic = {1: "ツモ", 2: "切る", 3: "ランダムツモ"}
     try:
         while True:
             if sys.platform == 'win32':
@@ -436,7 +438,8 @@ if __name__ == '__main__':
                 print(f"{(i+1)*10}", *conv[i*9:(i+1)*9])
             print()
 # モード表示
-            print("mode =", mode)
+            print("mode =", modedic[mode])
+            print("turn =", turn)
             print()
             print(*[f"{x:02}" for x in range(14)])
             print(*tehai.conv())
@@ -460,9 +463,12 @@ if __name__ == '__main__':
                 continue
 # 'random' でランダムツモモード
             if usrinput == 'random':
-                if mode == 1:
-                    rndtsumo(tehai)
+                tehai = Tehai()
+                turn = 0
                 mode = 3
+                continue
+            if usrinput == 'debug':
+                mode = 2
                 continue
             if not usrinput.isdigit():
                 continue
@@ -476,6 +482,7 @@ if __name__ == '__main__':
                 if not tehai.pop(int(usrinput)):
                     continue
                 rndtsumo(tehai)
+                turn += 1
 # Ctrl+C で終了
     except KeyboardInterrupt:
         print()
