@@ -23,13 +23,19 @@ def rndlst(lst):
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
 class Tehai:
-    def __init__(self, lst=rndlst(lst*4)[:14]):
-        if len(lst) not in [13, 14]:
-            return False
-        self.tehai = lst
-        self.tehai[:13] = sorted(self.tehai[:13])
-        if len(lst) == 14:
-            self.tsumo = self.tehai[13]
+    def __init__(self, te=rndlst(lst*4)[:14], furo=[]):
+        if len(te)+len(furo)*3 not in [13, 14]:
+            print("size error")
+            return None
+        if len(te)+len(furo)*3 == 13:
+            self.tehai = sorted(te)
+            self.furo = furo
+            self.tsumo = None
+        if len(te)+len(furo)*3 == 14:
+            self.tehai = te
+            self.tehai[:-1] = sorted(self.tehai[:-1])
+            self.furo = furo
+            self.tsumo = self.tehai[-1]
 
 # 刻子をカウントする
     def __kotsu(self, t, tset, ko):
@@ -78,7 +84,7 @@ class Tehai:
             syu = []
             self.__kotsu(t1, tset, ko)
             self.__syuntsu(t1, tset, syu)
-            if len(ko+syu) == 4:
+            if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+ko+syu)
 # 刻子優先、順子は逆順
             t1 = t.copy()
@@ -86,7 +92,7 @@ class Tehai:
             syu = []
             self.__kotsu(t1, tset[::-1], ko)
             self.__syuntsu(t1, tset[::-1], syu)
-            if len(ko+syu) == 4:
+            if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+(syu+ko)[::-1])
 # 順子優先、順子は正順
             t1 = t.copy()
@@ -94,7 +100,7 @@ class Tehai:
             syu = []
             self.__syuntsu(t1, tset, syu)
             self.__kotsu(t1, tset, ko)
-            if len(ko+syu) == 4:
+            if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+ko+syu)
 # 順子優先、順子は逆順
             t1 = t.copy()
@@ -102,7 +108,7 @@ class Tehai:
             syu = []
             self.__syuntsu(t1, tset[::-1], syu)
             self.__kotsu(t1, tset[::-1], ko)
-            if len(ko+syu) == 4:
+            if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+(syu+ko)[::-1])
         agari2 = []
         for a in agari:
@@ -292,6 +298,8 @@ class Tehai:
                         # print([" ".join([dic[x] for x in p]) for p in a])
                         for p in a:
                             print("".join([dic[x] for x in p]), end=" ")
+                        for f in self.furo:
+                            print("".join([dic[x] for x in f]), end=" ")
                         print()
                         if self.pinfu(a):
                             print("平和", end=" ")
@@ -386,7 +394,16 @@ class Tehai:
 
 # 手牌を対応する文字に変換
     def conv(self):
-        return [dic[x] for x in self.tehai]
+        tehai = [dic[x] for x in self.tehai]
+        furo = [[dic[x] for x in f] for f in self.furo]
+        allfuro = ""
+        for f in furo:
+            allfuro += "," + "".join(f)
+        return "".join(tehai) + allfuro
+
+# 手牌と副露牌をまとめたやーつ
+    def getAll(self):
+        return self.tehai + [x for inner in self.furo for x in inner]
 
 
 # このファイルを実行する時の処理
