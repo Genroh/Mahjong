@@ -23,7 +23,9 @@ def rndlst(lst):
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
 class Tehai:
-    def __init__(self, te=rndlst(lst*4)[:14], furo=[]):
+    def __init__(self, te=None, furo=[]):
+        if not te:
+            te = rndlst(lst*4)[:14]
         if len(te)+len(furo)*3 not in [13, 14]:
             print("size error")
             return None
@@ -412,9 +414,7 @@ class Tehai:
 # このファイルを実行する時の処理
 if __name__ == '__main__':
 
-    rnd = lst*4
-    random.shuffle(rnd)
-    tehai = Tehai(rnd[:14])
+    tehai = Tehai()
     mode = 2    # mode 1:ツモ 2:切る
     try:
         while True:
@@ -442,6 +442,10 @@ if __name__ == '__main__':
 # 'q' または ':q' で終了
             if usrinput == 'q' or usrinput == ':q':
                 break
+            if usrinput == 'r':
+                tehai = Tehai()
+                mode = 2
+                continue
             if not usrinput.isdigit():
                 continue
             if mode == 1:
