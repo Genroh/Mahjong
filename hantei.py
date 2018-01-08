@@ -21,9 +21,9 @@ def rndlst(lst):
     return lst
 
 
-def rndtsumo(tehai, sute):
+def rndtsumo(tehai, ho):
     tsumo = lst*4
-    for te in tehai.tehai+[x for y in tehai.furo for x in y]+sute:
+    for te in tehai.tehai+[x for y in tehai.furo for x in y]+ho:
         tsumo.remove(te)
     tehai.set(random.choice(tsumo))
 
@@ -277,8 +277,8 @@ class Tehai:
         for hai in lst:
             tehai = Tehai(sorted(self.tehai+[hai]))
             if tehai.hantei(False):
-                atari.append(dic[hai])
-        print("当たり牌:", *atari)
+                atari.append(hai)
+        return atari
 
 # アガリ状態かどうか判定する
     def hantei(self, flag):
@@ -423,7 +423,7 @@ class Tehai:
 if __name__ == '__main__':
 
     tehai = Tehai()
-    sute = []
+    ho = []
     turn = 0
     mode = 3    # mode 1:ツモ 2:切る 3:ランダムツモ
     modedic = {1: "ツモ", 2: "切る", 3: "ランダムツモ"}
@@ -448,12 +448,18 @@ if __name__ == '__main__':
             # print("対子:", *[dic[x] for x in tehai.count_toi()])
             # print()
             print("河:")
-            for i in range(len(sute)//6+1):
-                print(*[dic[x] for x in sute[i*6:(i+1)*6]])
+            for i in range(len(ho)//6+1):
+                print(*[dic[x] for x in ho[i*6:(i+1)*6]])
+            print()
             if mode in [1]:
-                tehai.atari()
+                atari = tehai.atari()
+                print("当たり牌:", *[dic[x] for x in atari])
             if mode in [2, 3]:
-                tehai.hantei(True)
+                if tehai.hantei(True):
+                    furi = Tehai(tehai.tehai[:-1], tehai.furo)
+                    for f in furi.atari():
+                        if f in ho:
+                            print("フリテン")
                 print()
             print("\n > ", end="")
             usrinput = input()
@@ -463,11 +469,15 @@ if __name__ == '__main__':
 # 'r' でリセット
             if usrinput == 'r':
                 tehai = Tehai()
-                mode = 2
+                ho = []
+                turn = 0
+                if mode == 1:
+                    mode = 2
                 continue
 # 'random' でランダムツモモード
             if usrinput == 'random':
                 tehai = Tehai()
+                ho = []
                 turn = 0
                 mode = 3
                 continue
@@ -479,14 +489,15 @@ if __name__ == '__main__':
             if mode == 1:
                 if tehai.set(int(usrinput)):
                     mode = 2
-            elif mode == 2:
-                if tehai.pop(int(usrinput)):
-                    mode = 1
-            elif mode == 3:
-                pop = tehai.pop(int(usrinput))
-                sute.append(pop)
-                rndtsumo(tehai, sute)
+            elif mode in [2, 3]:
                 turn += 1
+                pop = tehai.pop(int(usrinput))
+                ho.append(pop)
+                if mode == 2:
+                    mode = 1
+                    continue
+                elif mode == 3:
+                    rndtsumo(tehai, ho)
 # Ctrl+C で終了
     except KeyboardInterrupt:
         print()
