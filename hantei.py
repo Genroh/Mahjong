@@ -361,40 +361,59 @@ class Tehai:
                         if yaku:
                             print(yaku)
                             return True
+                        han = 0
                         if self.pinfu(a):
                             yaku += " 1翻 平和\n"
+                            han += 1
                         if toitoi:
                             yaku += " 2翻 対々和\n"
+                            han += 2
                         if chanta == 2 and not toitoi:
                             yaku += f" {2 if self.furo else 3}翻 純チャン\n"
+                            han += 2 if self.furo else 3
                         if chanta == 1 and toitoi:
                             yaku += " 2翻 混老頭\n"
+                            han += 2
                         if chanta == 1 and not toitoi:
                             yaku += f" {1 if self.furo else 2}翻 チャンタ\n"
+                            han += 1 if self.furo else 2
                         if sansyoku == 2:
                             yaku += " 2翻 三色同刻\n"
+                            han += 2
                         if sansyoku == 1:
                             yaku += f" {1 if self.furo else 2}翻 三色同順\n"
+                            han += 1 if self.furo else 2
                         if peko == 2:
                             yaku += " 3翻 二盃口\n"
+                            han += 3
                         if peko == 1:
                             yaku += " 1翻 一盃口\n"
+                            han += 1
                         if self.ittsu(a):
                             yaku += f" {1 if self.furo else 2}翻 一気通貫\n"
+                            han += 1 if self.furo else 2
                         if sangen == 1:
                             yaku += " 2翻 小三元\n"
+                            han += 2
                         if anko == 1:
                             yaku += " 2翻 三暗刻\n"
+                            han += 2
                         if self.tanyao():
                             yaku += " 1翻 たんやお\n"
+                            han += 1
                         if chinitsu == 1:
                             yaku += f" {5 if self.furo else 6}翻 清一色\n"
+                            han += 5 if self.furo else 6
                         if not self.furo:
                             yaku += " 1翻 門前清自摸和\n"
+                            han += 1
                         yakuhai = self.yakuhai(a)
                         for y in yakuhai:
                             yaku += f" 1翻 {dic[y]}\n"
-                        print(yaku)
+                            han += 1
+                        if yaku:
+                            print(yaku)
+                            print(f" {han}翻\n")
             return True
 
         if len(self.count_toi()) == 7:
@@ -402,22 +421,26 @@ class Tehai:
                 for x in self.count_toi():
                     print(dic[x]+dic[x], end=" ")
                 print()
-                print("七対子", end=" ")
+                yaku = ""
+                han = 0
                 chanta = self.chanta([[x] for x in self.count_toi()])
-                if chanta == 2:
-                    print("清老頭", end=" ")
-                if chanta == 1:
-                    print("混老頭", end=" ")
-                if self.tanyao():
-                    print("たんやお", end=" ")
                 chinitsu = self.chinitsu()
                 if chinitsu == 2:
-                    print("字一色", end=" ")
+                    print(" 役満 字一色")
+                    return True
+                yaku = yaku + " 2翻 七対子\n"
+                han += 2
+                if chanta == 1:
+                    yaku += " 2翻 混老頭\n"
+                    han += 2
+                if self.tanyao():
+                    yaku += " 1翻 たんやお\n"
+                    han += 1
                 if chinitsu == 1:
-                    print("清一色", end=" ")
-                if self.ryuiso():
-                    print("緑一色", end=" ")
-                print()
+                    yaku += " 6翻 清一色\n"
+                    han += 6
+                print(yaku)
+                print(f" {han}翻\n")
             return True
         return False
 
