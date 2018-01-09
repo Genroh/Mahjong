@@ -19,9 +19,11 @@ dic = dict(zip(lst, conv))
 ba = 41
 ji = 41
 
+
 def rndlst(lst):
     random.shuffle(lst)
     return lst
+
 
 def rndtsumo(tehai, ho):
     tsumo = lst*4
@@ -51,9 +53,9 @@ class Tehai:
 
 # 刻子をカウントする
     def pop_kotsu(self, te):
-        ko, t = [], te
-        for s in set(t):
-            if te.count(s) >= 3:
+        ko, t = [], te.copy()
+        for s in te:
+            if t.count(s) >= 3:
                 ko.append([s]*3)
                 del t[t.index(s):t.index(s)+3]
         return ko, t
@@ -91,8 +93,7 @@ class Tehai:
             target.append(tehai[:tehai.index(t)]
                           + tehai[tehai.index(t)+2:])
         for t, t2 in zip(target, toi):
-            # 含まれている対子毎にそれを雀頭として残りを解析
-            tset = sorted(set(t), key=t.index)
+# 含まれている対子毎にそれを雀頭として残りを解析
 # 刻子優先、順子は正順
             t1 = t.copy()
             ko = []
@@ -124,7 +125,7 @@ class Tehai:
             syu, t1 = self.pop_shuntsu(t1[::-1])
             ko, t1 = self.pop_kotsu(t1)
             if len(ko+syu+self.furo) == 4:
-                agari.append([[t2]*2]+ko+syu[::-1])
+                agari.append([[t2]*2]+(syu+ko)[::-1])
         agari2 = []
         for a in agari:
             flag = True
@@ -161,18 +162,18 @@ class Tehai:
         return True
 
 # 役牌
-    def yaku(self, lst):
-        yaku = []
+    def yakuhai(self, lst):
+        yakuhai = []
         for p in lst[1:]:
             if p.count(p[0]) != 3:
                 continue
             if p[0] == ba:
-                yaku.append(p[0])
+                yakuhai.append(p[0])
             if p[0] == ji:
-                yaku.append(p[0])
-            if p[0] in range(45, 48) and p[0] not in yaku:
-                yaku.append(p[0])
-        return yaku
+                yakuhai.append(p[0])
+            if p[0] in range(45, 48) and p[0] not in yakuhai:
+                yakuhai.append(p[0])
+        return yakuhai
 
 # チャンタ or 純チャンタ
     def chanta(self, lst):
@@ -193,7 +194,7 @@ class Tehai:
             ones.append([i % 10 for i in p])
             tens.append(p[0]//10)
         sames = [ones.count(x) for x in ones]
-        if not set((3, 4)) & set(sames):
+        if not {3, 4} & set(sames):
             return 0
         if 1 in sames:
             ones.pop(sames.index(1))
@@ -309,7 +310,7 @@ class Tehai:
         if tmp == [11, 19, 21, 29, 31, 39, 41, 42, 43, 44, 45, 46, 47]:
             if flag:
                 print(*[dic[x] for x in self.tehai])
-                print("国士無双")
+                print(" 役満 国士無双")
             return True
 
         for i in range(1, 4):
@@ -319,7 +320,7 @@ class Tehai:
                     and self.tehai.count(i*10+9) >= 3:
                 if flag:
                     print(*[dic[x] for x in self.tehai])
-                    print("九蓮宝燈")
+                    print(" 役満 九蓮宝燈")
                 return True
 
         agari = self.analysis()
@@ -342,83 +343,58 @@ class Tehai:
                         sushi = self.sushi(a)
                         anko = self.anko([x for x in a if x not in self.furo])
                         chinitsu = self.chinitsu()
-                        han = ""
+                        yaku = ""
                         if chanta == 2 and toitoi:
-                            print("清老頭", end=" ")
-                            han += "役満 清老頭\n"
+                            yaku += " 役満 清老頭\n"
                         if sangen == 2:
-                            print("大三元", end=" ")
-                            han += "役満 大三元\n"
+                            yaku += " 役満 大三元\n"
                         if sushi == 2:
-                            print("大四喜", end=" ")
-                            han += "ダブル役満 大四喜\n"
+                            yaku += " ダブル役満 大四喜\n"
                         if sushi == 1:
-                            print("小四喜", end=" ")
-                            han += "役満 小四喜\n"
+                            yaku += " 役満 小四喜\n"
                         if anko == 2:
-                            print("四暗刻", end=" ")
-                            han += "役満 四暗刻\n"
+                            yaku += " 役満 四暗刻\n"
                         if chinitsu == 2:
-                            print("字一色", end=" ")
-                            han += "役満 字一色\n"
+                            yaku += " 役満 字一色\n"
                         if self.ryuiso():
-                            print("緑一色", end=" ")
-                            han += "役満 緑一色\n"
-                        if han:
-                            print()
-                            print(han)
+                            yaku += " 役満 緑一色\n"
+                        if yaku:
+                            print(yaku)
                             return True
                         if self.pinfu(a):
-                            print("平和", end=" ")
-                            han += "1翻 平和\n"
+                            yaku += " 1翻 平和\n"
                         if toitoi:
-                            print("対々和", end=" ")
-                            han += "2翻 対々和\n"
+                            yaku += " 2翻 対々和\n"
                         if chanta == 2 and not toitoi:
-                            print("純チャン", end=" ")
-                            han += f"{2 if self.furo else 3}翻 純チャン\n"
+                            yaku += f" {2 if self.furo else 3}翻 純チャン\n"
                         if chanta == 1 and toitoi:
-                            print("混老頭", end=" ")
-                            han += "2翻 混老頭\n"
+                            yaku += " 2翻 混老頭\n"
                         if chanta == 1 and not toitoi:
-                            print("チャンタ", end=" ")
-                            han += f"{1 if self.furo else 2}翻 チャンタ\n"
+                            yaku += f" {1 if self.furo else 2}翻 チャンタ\n"
                         if sansyoku == 2:
-                            print("三色同刻", end=" ")
-                            han += "2翻 三色同刻\n"
+                            yaku += " 2翻 三色同刻\n"
                         if sansyoku == 1:
-                            print("三色同順", end=" ")
-                            han += f"{1 if self.furo else 2}翻 三色同順\n"
+                            yaku += f" {1 if self.furo else 2}翻 三色同順\n"
                         if peko == 2:
-                            print("二盃口", end=" ")
-                            han += "3翻 二盃口\n"
+                            yaku += " 3翻 二盃口\n"
                         if peko == 1:
-                            print("一盃口", end=" ")
-                            han += "1翻 一盃口\n" 
+                            yaku += " 1翻 一盃口\n"
                         if self.ittsu(a):
-                            print("一気通貫", end=" ")
-                            han += f"{1 if self.furo else 2}翻 一気通貫\n"
+                            yaku += f" {1 if self.furo else 2}翻 一気通貫\n"
                         if sangen == 1:
-                            print("小三元", end=" ")
-                            han += "2翻 小三元\n"
+                            yaku += " 2翻 小三元\n"
                         if anko == 1:
-                            print("三暗刻", end=" ")
-                            han += "2翻 三暗刻\n"
+                            yaku += " 2翻 三暗刻\n"
                         if self.tanyao():
-                            print("たんやお", end=" ")
-                            han += "1翻 たんやお\n"
+                            yaku += " 1翻 たんやお\n"
                         if chinitsu == 1:
-                            print("清一色", end=" ")
-                            han += f"{5 if self.furo else 6}翻 清一色\n"
+                            yaku += f" {5 if self.furo else 6}翻 清一色\n"
                         if not self.furo:
-                            print("門前清自摸和", end=" ")
-                            han += "1翻 門前清自摸和\n"
-                        yaku = self.yaku(a)
-                        for y in yaku:
-                            print(dic[y], end=" ")
-                            han += f"1翻 {dic[y]}\n"
-                        print()
-                        print(han)
+                            yaku += " 1翻 門前清自摸和\n"
+                        yakuhai = self.yakuhai(a)
+                        for y in yakuhai:
+                            yaku += f" 1翻 {dic[y]}\n"
+                        print(yaku)
             return True
 
         if len(self.count_toi()) == 7:
@@ -428,16 +404,16 @@ class Tehai:
                 print()
                 print("七対子", end=" ")
                 chanta = self.chanta([[x] for x in self.count_toi()])
-                if chanta[0]:
+                if chanta == 2:
                     print("清老頭", end=" ")
-                elif chanta[1]:
+                if chanta == 1:
                     print("混老頭", end=" ")
                 if self.tanyao():
                     print("たんやお", end=" ")
                 chinitsu = self.chinitsu()
                 if chinitsu == 2:
                     print("字一色", end=" ")
-                elif chinitsu:
+                if chinitsu == 1:
                     print("清一色", end=" ")
                 if self.ryuiso():
                     print("緑一色", end=" ")
