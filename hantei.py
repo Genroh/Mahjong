@@ -35,9 +35,11 @@ def rndtsumo(tehai, ho):
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
 class Tehai:
-    def __init__(self, te=None, furo=[]):
+    def __init__(self, te=None, furo=None):
         if not te:
             te = rndlst(lst*4)[:14]
+        if not furo:
+            furo = []
         if len(te)+len(furo)*3 not in [13, 14]:
             print("size error")
             return None
@@ -145,13 +147,6 @@ class Tehai:
         return True
 
 # 混一色 or 清一色 or 字一色
-#     def chinistu(self):
-#         for hai in self.tehai + [x for y in self.furo for x in y]:
-#             if hai//10 != self.tehai[0]//10:
-#                 return False
-#         if hai//10 == 4:
-#             return 3
-#         return 2
     def iso(self):
         iso = self.tehai + [x for y in self.furo for x in y]
         iso = {x//10 for x in iso}
@@ -171,11 +166,23 @@ class Tehai:
                 return False
         return True
 
+# 槓子
+    def kantsu(self, furo):
+        kantsu = 0
+        for f in furo:
+            if len(f) == 4:
+                kantsu += 1
+        if kantsu == 4:
+            return 2
+        elif kantsu == 3:
+            return 1
+        return 0
+
 # 役牌
     def yakuhai(self, lst):
         yakuhai = []
         for p in lst[1:]:
-            if p.count(p[0]) != 3:
+            if p.count(p[0]) not in  [3, 4]:
                 continue
             if p[0] == ba:
                 yakuhai.append(p[0])
@@ -201,7 +208,7 @@ class Tehai:
         for p in lst[1:]:
             if p[0]//10 == 4:
                 continue
-            ones.append([i % 10 for i in p])
+            ones.append([i % 10 for i in p][:3])
             tens.append(p[0]//10)
         sames = [ones.count(x) for x in ones]
         if not {3, 4} & set(sames):
@@ -306,7 +313,7 @@ class Tehai:
     def atari(self):
         atari = []
         for hai in lst:
-            tehai = Tehai(sorted(self.tehai+[hai]))
+            tehai = Tehai(sorted(self.tehai+[hai]), self.furo)
             if tehai.hantei(False):
                 atari.append(hai)
         return atari
@@ -353,6 +360,7 @@ class Tehai:
                         sushi = self.sushi(a)
                         anko = self.anko([x for x in a if x not in self.furo])
                         iso = self.iso()
+                        kantsu = self.kantsu(self.furo)
                         yaku = ""
                         if chanta == 2 and toitoi:
                             yaku += " 役満 清老頭\n"
@@ -364,6 +372,8 @@ class Tehai:
                             yaku += " 役満 小四喜\n"
                         if anko == 2:
                             yaku += " 役満 四暗刻\n"
+                        if kantsu == 2:
+                            yaku += " 役満 四槓子\n"
                         if iso == 3:
                             yaku += " 役満 字一色\n"
                         if self.ryuiso():
@@ -407,6 +417,9 @@ class Tehai:
                             han += 2
                         if anko == 1:
                             yaku += " 2翻 三暗刻\n"
+                            han += 2
+                        if kantsu == 1:
+                            yaku += " 2翻 三槓子\n"
                             han += 2
                         if self.tanyao():
                             yaku += " 1翻 たんやお\n"
@@ -467,7 +480,7 @@ class Tehai:
 
 # 手牌を切る
     def pop(self, hai):
-        if hai < 0 or hai > 13:
+        if hai < 0 or hai > len(self.tehai):
             return None
         pop = self.tehai.pop(hai)
         self.tsumo = None
