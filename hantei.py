@@ -582,7 +582,9 @@ if __name__ == '__main__':
                 if set([tehai.tsumo-1, tehai.tsumo+1]) <= set(tehai.tehai):
                     furable.append([tehai.tsumo-1, tehai.tsumo+1])
                 if tehai.tehai.count(tehai.tsumo) >= 3:
-                    furable.append([tehai.tsumo, tehai.tsumo])
+                    furable.append([tehai.tsumo]*2)
+                if tehai.tehai.count(tehai.tsumo) == 4:
+                    furable.append([tehai.tsumo]*3)
                 for i in range(len(furable)):
                     print(i, *[dic[x] for x in furable[i]])
                 flag = True
@@ -603,6 +605,11 @@ if __name__ == '__main__':
                 for f in furable[int(usrinput)]+[tehai.tsumo]:
                     tehai.tehai.remove(f)
                 tehai.tsumo = None
+                if len(furable[int(usrinput)]) == 3:
+                    if mode == 2:
+                        mode = 1
+                    elif mode == 3:
+                        tehai.tsumo = rndtsumo(tehai, ho)
                 continue
 # それ以外で数値でなければ弾く
             if not usrinput.isdigit():
