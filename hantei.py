@@ -367,6 +367,8 @@ class Tehai:
                             print("清一色", end=" ")
                         if self.ryuiso():
                             print("緑一色", end=" ")
+                        if not self.furo():
+                            print("門前清自自摸", end=" ")
                         print()
             return True
 
@@ -431,6 +433,8 @@ if __name__ == '__main__':
     tehai = Tehai()
     ho = []
     turn = 0
+    ba = 41
+    ji = 41
     mode = 3    # mode 1:ツモ 2:切る 3:ランダムツモ
     modedic = {1: "ツモ", 2: "切る", 3: "ランダムツモ"}
     try:
@@ -447,6 +451,8 @@ if __name__ == '__main__':
 # モード表示
             print("mode =", modedic[mode])
             print("turn =", turn)
+            print()
+            print("場風:", dic[ba], "自風:", dic[ji])
             print()
             print(*[f"{x:02}" for x in range(14)])
             print(*tehai.conv())
@@ -466,7 +472,6 @@ if __name__ == '__main__':
                     for f in furi.atari():
                         if f in ho:
                             print("フリテン")
-                print()
             print("\n > ", end="")
             usrinput = input()
 # 'q' または ':q' で終了
@@ -479,6 +484,15 @@ if __name__ == '__main__':
                 turn = 0
                 if mode == 1:
                     mode = 2
+                continue
+# 'ba' で場風指定, 'ji' で自風指定
+            if usrinput.split()[0] in ['ba', 'ji']:
+                if usrinput.split()[1].isdigit():
+                    if int(usrinput.split()[1]) in [41, 42, 43, 44]:
+                        if usrinput.split()[0] == 'ba':
+                            ba = int(usrinput.split()[1])
+                        else:
+                            ji = int(usrinput.split()[1])
                 continue
 # 'random' でランダムツモモード
             if usrinput == 'random':
