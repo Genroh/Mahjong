@@ -16,6 +16,8 @@ conv = ['一', '二', '三', '四', '五', '六', '七', '八', '九',
         '東', '南', '西', '北', '白', '發', '中']
 dic = dict(zip(lst, conv))
 
+ba = 41
+ji = 41
 
 def rndlst(lst):
     random.shuffle(lst)
@@ -271,7 +273,7 @@ class Tehai:
 
 # 平和
     def pinfu(self, lst):
-        if self.furo or lst[0][0] in range(45, 48):
+        if self.furo or lst[0][0] in [ba, ji] + list(range(45, 48)):
             return False
         pinfu = False
         for p in lst[1:]:
@@ -446,8 +448,6 @@ if __name__ == '__main__':
     tehai = Tehai()
     ho = []
     turn = 0
-    ba = 41
-    ji = 41
     mode = 3    # mode 1:ツモ 2:切る 3:ランダムツモ
     modedic = {1: "ツモ", 2: "切る", 3: "ランダムツモ"}
     try:
