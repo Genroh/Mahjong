@@ -156,6 +156,16 @@ class Tehai:
                 return False
         return True
 
+# 役牌
+    def yaku(self, lst):
+        yaku = []
+        for p in lst[1:]:
+            if p.count(p[0]) != 3:
+                continue
+            if p[0] in range(41, 48) and p[0] not in yaku:
+                yaku.append(p[0])
+        return yaku
+
 # チャンタ or 純チャンタ
     def chanta(self, lst):
         chanta = [True, True]   # [純チャン, チャンタ]
@@ -367,8 +377,11 @@ class Tehai:
                             print("清一色", end=" ")
                         if self.ryuiso():
                             print("緑一色", end=" ")
-                        if not self.furo():
+                        if not self.furo:
                             print("門前清自自摸", end=" ")
+                        yaku = self.yaku(a)
+                        for y in yaku:
+                            print(dic[y], end=" ")
                         print()
             return True
 
