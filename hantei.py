@@ -485,6 +485,14 @@ if __name__ == '__main__':
                     for f in furi.atari():
                         if f in ho:
                             print("フリテン")
+                else:
+                    kiru = []
+                    for i in range(len(tehai.tehai)-1):
+                        tmp = tehai.tehai[:i] + tehai.tehai[i+1:]
+                        tempai = Tehai(tmp, tehai.furo)
+                        if tempai.atari() and tempai.tehai[i] not in kiru:
+                            kiru.append(tehai.tehai[i])
+                    print("聴牌:", *[dic[x] for x in kiru])
             print("\n > ", end="")
             usrinput = input()
 # 'q' または ':q' で終了
@@ -499,7 +507,7 @@ if __name__ == '__main__':
                     mode = 2
                 continue
 # 'ba' で場風指定, 'ji' で自風指定
-            if usrinput.split()[0] in ['ba', 'ji']:
+            if usrinput and usrinput.split()[0] in ['ba', 'ji']:
                 if usrinput.split()[1].isdigit():
                     if int(usrinput.split()[1]) in [41, 42, 43, 44]:
                         if usrinput.split()[0] == 'ba':
