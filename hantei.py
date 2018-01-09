@@ -139,19 +139,29 @@ class Tehai:
 
 # タンヤオ
     def tanyao(self):
-        for hai in self.tehai + [x for inner in self.furo for x in inner]:
+        for hai in self.tehai + [x for y in self.furo for x in y]:
             if hai//10 == 4 or hai % 10 == 1 or hai % 10 == 9:
                 return False
         return True
 
-# 清一色 or 字一色
-    def chinitsu(self):
-        for hai in self.tehai + [x for inner in self.furo for x in inner]:
-            if hai//10 != self.tehai[0]//10:
-                return False
-        if hai//10 == 4:
+# 混一色 or 清一色 or 字一色
+#     def chinistu(self):
+#         for hai in self.tehai + [x for y in self.furo for x in y]:
+#             if hai//10 != self.tehai[0]//10:
+#                 return False
+#         if hai//10 == 4:
+#             return 3
+#         return 2
+    def iso(self):
+        iso = self.tehai + [x for y in self.furo for x in y]
+        iso = {x//10 for x in iso}
+        if len(iso) == 1 and 4 in iso:
+            return 3
+        elif len(iso) == 1:
             return 2
-        return True
+        elif len(iso) == 2 and 4 in iso:
+            return 1
+        return 0
 
 # 緑一色
     def ryuiso(self):
@@ -342,7 +352,7 @@ class Tehai:
                         sangen = self.sangen(a)
                         sushi = self.sushi(a)
                         anko = self.anko([x for x in a if x not in self.furo])
-                        chinitsu = self.chinitsu()
+                        iso = self.iso()
                         yaku = ""
                         if chanta == 2 and toitoi:
                             yaku += " 役満 清老頭\n"
@@ -354,7 +364,7 @@ class Tehai:
                             yaku += " 役満 小四喜\n"
                         if anko == 2:
                             yaku += " 役満 四暗刻\n"
-                        if chinitsu == 2:
+                        if iso == 3:
                             yaku += " 役満 字一色\n"
                         if self.ryuiso():
                             yaku += " 役満 緑一色\n"
@@ -401,9 +411,12 @@ class Tehai:
                         if self.tanyao():
                             yaku += " 1翻 たんやお\n"
                             han += 1
-                        if chinitsu == 1:
+                        if iso == 2:
                             yaku += f" {5 if self.furo else 6}翻 清一色\n"
                             han += 5 if self.furo else 6
+                        if iso == 1:
+                            yaku += f" {2 if self.furo else 3}翻 混一色\n"
+                            han += 2 if self.furo else 3
                         if not self.furo:
                             yaku += " 1翻 門前清自摸和\n"
                             han += 1
@@ -424,8 +437,8 @@ class Tehai:
                 yaku = ""
                 han = 0
                 chanta = self.chanta([[x] for x in self.count_toi()])
-                chinitsu = self.chinitsu()
-                if chinitsu == 2:
+                iso = self.iso()
+                if iso == 3:
                     print(" 役満 字一色")
                     return True
                 yaku = yaku + " 2翻 七対子\n"
@@ -436,7 +449,7 @@ class Tehai:
                 if self.tanyao():
                     yaku += " 1翻 たんやお\n"
                     han += 1
-                if chinitsu == 1:
+                if iso == 2:
                     yaku += " 6翻 清一色\n"
                     han += 6
                 print(yaku)
