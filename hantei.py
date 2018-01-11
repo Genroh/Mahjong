@@ -552,7 +552,7 @@ if __name__ == '__main__':
                         tempai = Tehai(tmp, tehai.furo)
                         if tempai.atari() and tehai.tehai[i] not in kiru:
                             kiru.append(tehai.tehai[i])
-                    print("聴牌:", *[dic[x] for x in kiru])
+                    print("聴牌:", *[dic[x] for x in sorted(kiru)])
             print("\n > ", end="")
             usrinput = input()
 # 'q' または ':q' で終了
