@@ -10,10 +10,10 @@ import pdb
 
 # 牌に使う数値と文字の対応
 lst = [i for i in range(11, 48) if i % 10 != 0]
-conv = ['一', '二', '三', '四', '五', '六', '七', '八', '九',
+conv = ('一', '二', '三', '四', '五', '六', '七', '八', '九',
         '１', '２', '３', '４', '５', '６', '７', '８', '９',
         'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ',
-        '東', '南', '西', '北', '白', '發', '中']
+        '東', '南', '西', '北', '白', '發', '中')
 dic = dict(zip(lst, conv))
 
 ba = 41
@@ -552,7 +552,7 @@ if __name__ == '__main__':
                         tempai = Tehai(tmp, tehai.furo)
                         if tempai.atari() and tehai.tehai[i] not in kiru:
                             kiru.append(tehai.tehai[i])
-                    print("聴牌:", *[dic[x] for x in kiru])
+                    print("聴牌:", *[dic[x] for x in sorted(kiru)])
             print("\n > ", end="")
             usrinput = input()
 # 'q' または ':q' で終了
