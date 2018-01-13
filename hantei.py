@@ -31,6 +31,13 @@ def rndtsumo(tehai, ho):
         tsumo.remove(te)
     tehai.set(random.choice(tsumo))
 
+def remlst(lst, rem, num):
+    l = lst.copy()
+    for i in range(num):
+        if l.count(rem) <= 0:
+            break
+        l.remove(rem)
+    return l
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -88,12 +95,13 @@ class Tehai:
 # 一般的なアガリ形かどうかを解析する
     def analysis(self):
         toi = self.count_toi()
+        # tehai = sorted(self.tehai[:-1])+self.tehai[-1:]
         tehai = sorted(self.tehai)
         target = []
         agari = []
         for t in toi:
-            target.append(tehai[:tehai.index(t)]
-                          + tehai[tehai.index(t)+2:])
+            target.append(
+                remlst(tehai, t, 2))
         for t, t2 in zip(target, toi):
 # 含まれている対子毎にそれを雀頭として残りを解析
 # 刻子優先、順子は正順
