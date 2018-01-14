@@ -155,9 +155,10 @@ class Tehai:
         for a in agari:
             flag = True
             for a2 in agari2:
-                if a == a2:
+                for a3 in a:
+                    if a3 not in a2 or a.count(a3) != a2.count(a3):
+                        continue
                     flag = False
-                    break
             if flag:
                 agari2.append(a)
         return agari2
