@@ -100,8 +100,7 @@ class Tehai:
         target = []
         agari = []
         for t in toi:
-            target.append(
-                remlst(tehai, t, 2))
+            target.append(remlst(tehai, t, 2))
         for t, t2 in zip(target, toi):
 # 含まれている対子毎にそれを雀頭として残りを解析
 # 刻子優先、順子は正順
@@ -113,13 +112,13 @@ class Tehai:
             if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+ko+syu)
 # 刻子優先、順子は逆順
-            t1 = t.copy()
-            ko = []
-            syu = []
-            ko, t1 = self.pop_kotsu(t1)
-            syu, t1 = self.pop_shuntsu(t1[::-1])
-            if len(ko+syu+self.furo) == 4:
-                agari.append([[t2]*2]+ko+syu[::-1])
+#             t1 = t.copy()
+#             ko = []
+#             syu = []
+#             ko, t1 = self.pop_kotsu(t1)
+#             syu, t1 = self.pop_shuntsu(t1[::-1])
+#             if len(ko+syu+self.furo) == 4:
+#                 agari.append([[t2]*2]+ko+syu[::-1])
 # 順子優先、順子は正順
             t1 = t.copy()
             ko = []
@@ -129,13 +128,13 @@ class Tehai:
             if len(ko+syu+self.furo) == 4:
                 agari.append([[t2]*2]+ko+syu)
 # 順子優先、順子は逆順
-            t1 = t.copy()
-            ko = []
-            syu = []
-            syu, t1 = self.pop_shuntsu(t1[::-1])
-            ko, t1 = self.pop_kotsu(t1)
-            if len(ko+syu+self.furo) == 4:
-                agari.append([[t2]*2]+(syu+ko)[::-1])
+#             t1 = t.copy()
+#             ko = []
+#             syu = []
+#             syu, t1 = self.pop_shuntsu(t1[::-1])
+#             ko, t1 = self.pop_kotsu(t1)
+#             if len(ko+syu+self.furo) == 4:
+#                 agari.append([[t2]*2]+(syu+ko)[::-1])
         agari2 = []
         for a in agari:
             flag = True
