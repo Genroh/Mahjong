@@ -15,6 +15,8 @@ conv = ('一', '二', '三', '四', '五', '六', '七', '八', '九',
         'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ',
         '東', '南', '西', '北', '白', '發', '中')
 dic = dict(zip(lst, conv))
+dic.update(zip([-x for x in lst],
+           map(lambda x: "\033[031m"+x+"\033[00m", conv)))
 
 ba = 41
 ji = 41
@@ -31,6 +33,7 @@ def rndtsumo(tehai, ho):
         tsumo.remove(te)
     tehai.set(random.choice(tsumo))
 
+
 def remlst(lst, rem, num):
     l = lst.copy()
     for i in range(num):
@@ -38,6 +41,7 @@ def remlst(lst, rem, num):
             break
         l.remove(rem)
     return l
+
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -110,7 +114,13 @@ class Tehai:
             ko, t1 = self.pop_kotsu(t1)
             syu, t1 = self.pop_shuntsu(t1)
             if len(ko+syu+self.furo) == 4:
-                agari.append([[t2]*2]+ko+syu)
+                tmp = [[t2]*2]+ko+syu
+                for i in range(len(tmp)):
+                    if self.tsumo in tmp[i]:
+                        alt = tmp[i].copy()
+                        alt[alt.index(self.tsumo)] *= -1
+                        agari.append(tmp[:i] + [alt] + tmp[i+1:])
+#                 agari.append([[t2]*2]+ko+syu)
 # 刻子優先、順子は逆順
 #             t1 = t.copy()
 #             ko = []
@@ -126,7 +136,13 @@ class Tehai:
             syu, t1 = self.pop_shuntsu(t1)
             ko, t1 = self.pop_kotsu(t1)
             if len(ko+syu+self.furo) == 4:
-                agari.append([[t2]*2]+ko+syu)
+                tmp = [[t2]*2]+ko+syu
+                for i in range(len(tmp)):
+                    if self.tsumo in tmp[i]:
+                        alt = tmp[i].copy()
+                        alt[alt.index(self.tsumo)] *= -1
+                        agari.append(tmp[:i] + [alt] + tmp[i+1:])
+#                 agari.append([[t2]*2]+ko+syu)
 # 順子優先、順子は逆順
 #             t1 = t.copy()
 #             ko = []
@@ -189,7 +205,7 @@ class Tehai:
     def yakuhai(self, lst):
         yakuhai = []
         for p in lst[1:]:
-            if p.count(p[0]) not in  [3, 4]:
+            if [abs(x) for x in p].count(p[0]) not in [3, 4]:
                 continue
             if p[0] == ba:
                 yakuhai.append(p[0])
@@ -203,9 +219,9 @@ class Tehai:
     def chanta(self, lst):
         chanta = 2   # [純チャン, チャンタ]
         for p in lst:
-            if p[0] % 10 not in [1, 9] and p[-1] % 10 not in [1, 9]:
+            if abs(p[0]) % 10 not in [1, 9] and abs(p[-1]) % 10 not in [1, 9]:
                 chanta = 1
-                if p[0]//10 != 4 and p[-1]//10 != 4:
+                if abs(p[0])//10 != 4 and abs(p[-1])//10 != 4:
                     return 0
         return chanta
 
@@ -213,7 +229,7 @@ class Tehai:
     def sansyoku(self, lst):
         ones, tens = [], []
         for p in lst[1:]:
-            if p[0]//10 == 4:
+            if abs(p[0])//10 == 4:
                 continue
             ones.append([i % 10 for i in p][:3])
             tens.append(p[0]//10)
@@ -230,10 +246,10 @@ class Tehai:
                 return 2
         return 0
 
-# 三暗刻
+# 三暗刻 or 四暗刻
     def anko(self, lst):
         count = 0
-        for p in lst[1:]:
+        for p in [list(map(abs, x)) for x in lst[1:]]:
             if p.count(p[0]) == 3:
                 count += 1
         if count == 3:
@@ -247,7 +263,7 @@ class Tehai:
         if self.furo:
             return False
         peko = []
-        for p in lst[1:]:
+        for p in [list(map(abs, x)) for x in lst[1:]]:
             if p.count(p[0]) == 1:
                 peko.append(p)
         sames = [peko.count(x) for x in peko]
@@ -260,7 +276,7 @@ class Tehai:
 
 # 一気通貫
     def ittsu(self, lst):
-        lst = [x for inner in lst[1:] for x in inner]
+        lst = [abs(x) for inner in lst[1:] for x in inner]
         for i in range(1, 4):
             if set(range(i*10+1, i*10+10)) <= set(lst):
                 return True
@@ -268,7 +284,7 @@ class Tehai:
 
 # 対々和
     def toitoi(self, lst):
-        for l in lst[1:]:
+        for l in [list(map(abs, x)) for x in lst[1:]]:
             if l.count(l[0]) != 3:
                 return False
         return True
@@ -276,7 +292,7 @@ class Tehai:
 # 小三元 or 大三元
     def sangen(self, lst):
         count = 0
-        lst = [x for inner in lst for x in inner]
+        lst = [abs(x) for inner in lst for x in inner]
         for l in range(45, 48):
             if l in lst:
                 count += 1
@@ -290,7 +306,7 @@ class Tehai:
 # 小四喜 or 大四喜
     def sushi(self, lst):
         count = 0
-        lst = [x for inner in lst for x in inner]
+        lst = [abs(x) for inner in lst for x in inner]
         for l in range(41, 45):
             if l in lst:
                 count += 1
@@ -307,7 +323,7 @@ class Tehai:
             return False
         pinfu = False
         for p in lst[1:]:
-            if p.count(p[0]) != 1:
+            if [abs(x) for x in p].count(p[0]) != 1:
                 return False
             if self.tsumo in [p[0], p[-1]]:
                 if [x % 10 for x in p if self.tsumo != x] in [[1, 2], [8, 9]]:
