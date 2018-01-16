@@ -600,9 +600,8 @@ if __name__ == '__main__':
                 continue
 # 'random' でランダムツモモード
             if usrinput == 'random':
-                tehai = Tehai()
-                ho = []
-                turn = 0
+                if len(tehai.tehai)+len(tehai.furo)*3 == 13:
+                    rndtsumo(tehai, ho)
                 mode = 3
                 continue
             if usrinput == 'debug':
