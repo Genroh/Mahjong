@@ -152,15 +152,14 @@ class Tehai:
 #             if len(ko+syu+self.furo) == 4:
 #                 agari.append([[t2]*2]+(syu+ko)[::-1])
         agari2 = []
-        for a in agari:
-            flag = True
+        for a1 in agari:
+            flag = False
             for a2 in agari2:
-                for a3 in a:
-                    if a3 not in a2 or a.count(a3) != a2.count(a3):
-                        continue
-                    flag = False
-            if flag:
-                agari2.append(a)
+                for a3 in a1:
+                    if a3 not in a2 or a1.count(a3) != a2.count(a3):
+                        flag = True
+            if flag or not agari2:
+                agari2.append(a1)
         return agari2
 
 # タンヤオ
@@ -323,11 +322,11 @@ class Tehai:
         if self.furo or lst[0][0] in [ba, ji] + list(range(45, 48)):
             return False
         pinfu = False
-        for p in lst[1:]:
-            if [abs(x) for x in p].count(p[0]) != 1:
+        for p0 in lst[1:]:
+            if [abs(x) for x in p0].count(abs(p0[0])) != 1:
                 return False
-            if self.tsumo in [p[0], p[-1]]:
-                if [x % 10 for x in p if self.tsumo != x] in [[1, 2], [8, 9]]:
+            if p0[0] * p0[-1] < 0:
+                if [x % 10 for x in p0 if self.tsumo != x] in [[1, 2], [8, 9]]:
                     return False
                 pinfu = True
         return pinfu
