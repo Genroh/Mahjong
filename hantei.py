@@ -34,13 +34,30 @@ def rndtsumo(tehai, ho):
     tehai.set(random.choice(tsumo))
 
 
-def remlst(lst, rem, num):
-    l = lst.copy()
+def rmlst(lst, rem, num):
+    ls = lst.copy()
     for i in range(num):
-        if l.count(rem) <= 0:
+        if ls.count(rem) <= 0:
             break
-        l.remove(rem)
-    return l
+        ls.remove(rem)
+    return ls
+
+
+#
+class Agari:
+    def __init__(self):
+        print()
+
+    self.janto=[]
+    self.ko=[]
+    self.syu=[]
+    self.kan=[]
+    self.fuko=[]
+    self.fusyu=[]
+    self.fukan=[]
+    self.yaku=""
+    self.han=0
+    self.hu=0
 
 
 # 手牌を管理したり上がり形判定したりするクラス
@@ -104,7 +121,7 @@ class Tehai:
         target = []
         agari = []
         for t in toi:
-            target.append(remlst(tehai, t, 2))
+            target.append(rmlst(tehai, t, 2))
         for t, t2 in zip(target, toi):
 # 含まれている対子毎にそれを雀頭として残りを解析
 # 刻子優先、順子は正順
