@@ -48,16 +48,16 @@ class Agari:
     def __init__(self):
         print()
 
-    self.janto=[]
-    self.ko=[]
-    self.syu=[]
-    self.kan=[]
-    self.fuko=[]
-    self.fusyu=[]
-    self.fukan=[]
-    self.yaku=""
-    self.han=0
-    self.hu=0
+    janto=[]
+    ko=[]
+    syu=[]
+    kan=[]
+    fuko=[]
+    fusyu=[]
+    fukan=[]
+    yaku=""
+    han=0
+    hu=0
 
 
 # 手牌を管理したり上がり形判定したりするクラス
@@ -267,7 +267,7 @@ class Tehai:
     def anko(self, lst):
         count = 0
         for p in [list(map(abs, x)) for x in lst[1:]]:
-            if p.count(p[0]) == 3:
+            if p.count(p[0]) in [3, 4]:
                 count += 1
         if count == 3:
             return True
@@ -385,20 +385,20 @@ class Tehai:
             if flag:
                 print("雀頭1 面子4")
                 self.agari = []
-                for a in agari:
-                    if a not in self.agari:
-                        self.agari.append(a)
-                        a.extend(self.furo)
-                        for p in a:
+                for a1 in agari:
+                    if a1 not in self.agari:
+                        self.agari.append(a1)
+                        a1.extend(self.furo)
+                        for p in a1:
                             print("".join([dic[x] for x in p]), end=" ")
                         print()
-                        chanta = self.chanta(a)
-                        toitoi = self.toitoi(a)
-                        sansyoku = self.sansyoku(a)
-                        peko = self.peko(a)
-                        sangen = self.sangen(a)
-                        sushi = self.sushi(a)
-                        anko = self.anko([x for x in a if x not in self.furo])
+                        chanta = self.chanta(a1)
+                        toitoi = self.toitoi(a1)
+                        sansyoku = self.sansyoku(a1)
+                        peko = self.peko(a1)
+                        sangen = self.sangen(a1)
+                        sushi = self.sushi(a1)
+                        anko = self.anko([x for x in a1 if x not in self.furo])
                         iso = self.iso()
                         kantsu = self.kantsu(self.furo)
                         yaku = ""
@@ -422,7 +422,7 @@ class Tehai:
                             print(yaku)
                             return True
                         han = 0
-                        if self.pinfu(a):
+                        if self.pinfu(a1):
                             yaku += " 1翻 平和\n"
                             han += 1
                         if toitoi:
@@ -449,7 +449,7 @@ class Tehai:
                         if peko == 1:
                             yaku += " 1翻 一盃口\n"
                             han += 1
-                        if self.ittsu(a):
+                        if self.ittsu(a1):
                             yaku += f" {1 if self.furo else 2}翻 一気通貫\n"
                             han += 1 if self.furo else 2
                         if sangen == 1:
@@ -473,7 +473,7 @@ class Tehai:
                         if not self.furo:
                             yaku += " 1翻 門前清自摸和\n"
                             han += 1
-                        yakuhai = self.yakuhai(a)
+                        yakuhai = self.yakuhai(a1)
                         for y in yakuhai:
                             yaku += f" 1翻 {dic[y]}\n"
                             han += 1
