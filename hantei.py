@@ -555,7 +555,7 @@ class Tehai:
                             han += 1
                         if yaku:
                             print(yaku)
-                            print(f" {han}翻\n")
+                            print(f" {a1.get_fu()}符 {han}翻\n")
             return True
 
         if len(self.count_toi()) == 7:
@@ -582,7 +582,7 @@ class Tehai:
                     yaku += " 6翻 清一色\n"
                     han += 6
                 print(yaku)
-                print(f" {han}翻\n")
+                print(f" 25符 {han}翻\n")
             return True
         return False
 
