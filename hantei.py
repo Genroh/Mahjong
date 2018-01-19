@@ -16,7 +16,7 @@ conv = ('一', '二', '三', '四', '五', '六', '七', '八', '九',
         '東', '南', '西', '北', '白', '發', '中')
 dic = dict(zip(lst, conv))
 dic.update(zip([-x for x in lst],
-           map(lambda x: "\033[031m"+x+"\033[00m", conv)))
+           map(lambda x: f"\033[031m"+x+"\033[00m", conv)))
 
 ba = 41
 ji = 41
@@ -43,21 +43,37 @@ def rmlst(lst, rem, num):
     return ls
 
 
-#
+# アガリ形を分解して保持するクラス
 class Agari:
-    def __init__(self):
-        print()
+    def __init__(self, tsumo, kaze, janto, mentsu, furo):
+        self.tsumo = tsumo
+        self.kaze = kaze
+        self.janto = janto
+        self.syu = []
+        self.ko = []
+        self.kan = []
+        self.fu_syu = []
+        self.fu_ko = []
+        self.fu_kan = []
+        for men in mentsu:
+            if [abs(x) for x in men].count(abs(men[0])) == 1:
+                self.syu.append(men)
+            else:
+                self.ko.append(men)
+        fu_ap = {1:self.fu_syu.append, 3:self.fu_ko.append, 4:self.split_kan}
+        for fu in furo:
+            fu_ap[[abs(x) for x in fu].count(abs(fu[0]))](fu)
 
-    janto=[]
-    ko=[]
-    syu=[]
-    kan=[]
-    fuko=[]
-    fusyu=[]
-    fukan=[]
-    yaku=""
-    han=0
-    hu=0
+    def split_kan(self, kan):
+        furo = False
+        for k in kan:
+            if k < 0:
+                furo = True
+                break
+        if furo:
+            self.fu_kan.append(kan)
+        else:
+            self.kan.append(kan)
 
 
 # 手牌を管理したり上がり形判定したりするクラス
@@ -537,7 +553,7 @@ class Tehai:
         return "".join(tehai) + allfuro
 
 # 手牌と副露牌をまとめたやーつ
-    def getAll(self):
+    def get_all(self):
         return self.tehai + [x for inner in self.furo for x in inner]
 
 
