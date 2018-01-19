@@ -44,6 +44,12 @@ def rmlst(lst, rem, num):
     return ls
 
 
+def lsteq(lst1, lst2):
+    for l1 in lst1:
+        if l1 not in lst2 or lst1.count(l1) != lst2.count(l1):
+            return False
+    return True
+
 # アガリ形を分解して保持するクラス
 class Agari:
     def __init__(self, tsumo, kaze, janto, mentsu, furo):
@@ -102,6 +108,22 @@ class Agari:
             if syu[1] < 0:
                 self.fu += 2
         return self.fu
+
+    def equal(self, agari):
+        lst = [
+                lsteq(self.janto, agari.janto),
+                lsteq(self.syu, agari.syu),
+                lsteq(self.ko, agari.ko),
+                lsteq(self.kan, agari.kan),
+                lsteq(self.fu_syu, agari.fu_syu),
+                lsteq(self.fu_ko, agari.fu_ko),
+                lsteq(self.fu_kan, agari.fu_kan)
+        ]
+        for ls in lst:
+            if ls == False:
+                return False
+        return True
+
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
