@@ -91,8 +91,8 @@ class Agari:
             return self.fu
         except:
             self.fu = 20
-        if self.janto in yaochu:
-            self.fu += 4 if len(set(ba, self.kaze, self.janto)) == 1 else 2
+        if abs(self.janto[0]) in yaochu:
+            self.fu += 4 if abs(self.janto[0])==ba and ba==self.kaze else 2
         for po in self.fu_ko:
             self.fu += 4 if po[0] in yaochu else 2
         for po in self.ko:
