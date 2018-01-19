@@ -52,17 +52,17 @@ def lsteq(lst1, lst2):
 
 # アガリ形を分解して保持するクラス
 class Agari:
-    def __init__(self, tsumo, kaze, janto, mentsu, furo):
+    def __init__(self, tsumo, kaze, te, furo):
         self.tsumo = tsumo
         self.kaze = kaze
-        self.janto = janto
+        self.janto = te[0]
         self.syu = []
         self.ko = []
         self.kan = []
         self.fu_syu = []
         self.fu_ko = []
         self.fu_kan = []
-        for men in mentsu:
+        for men in te[1:]:
             if [abs(x) for x in men].count(abs(men[0])) == 1:
                 self.syu.append(men)
             else:
@@ -101,7 +101,7 @@ class Agari:
             self.fu += 16 if po[0] in yaochu else 8
         for po in self.kan:
             self.fu += 32 if po[0] in yaochu else 16
-        for to in janto:
+        for to in self.janto:
             if to < 0:
                 self.fu += 2
         for syu in self.syu:
@@ -124,6 +124,14 @@ class Agari:
                 return False
         return True
 
+    def get_te(self):
+        return [self.janto] + self.ko + self.syu
+
+    def get_furo(self):
+        return self.fu_ko + self.fu_syu + self.fu_kan
+
+    def get_all(self):
+        return self.get_te() + self.get_furo()
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -201,7 +209,9 @@ class Tehai:
                     if self.tsumo in tmp[i]:
                         alt = tmp[i].copy()
                         alt[alt.index(self.tsumo)] *= -1
-                        agari.append(tmp[:i] + [alt] + tmp[i+1:])
+                        agari.append(Agari(
+                            True, ji, tmp[:i]+[alt]+tmp[i+1:], self.furo
+                        ))
 #                 agari.append([[t2]*2]+ko+syu)
 # 刻子優先、順子は逆順
 #             t1 = t.copy()
@@ -223,7 +233,9 @@ class Tehai:
                     if self.tsumo in tmp[i]:
                         alt = tmp[i].copy()
                         alt[alt.index(self.tsumo)] *= -1
-                        agari.append(tmp[:i] + [alt] + tmp[i+1:])
+                        agari.append(Agari(
+                            True, ji, tmp[:i]+[alt]+tmp[i+1:], self.furo
+                        ))
 #                 agari.append([[t2]*2]+ko+syu)
 # 順子優先、順子は逆順
 #             t1 = t.copy()
@@ -235,12 +247,12 @@ class Tehai:
 #                 agari.append([[t2]*2]+(syu+ko)[::-1])
         agari2 = []
         for a1 in agari:
-            flag = False
+            flag = True
             for a2 in agari2:
-                for a3 in a1:
-                    if a3 not in a2 or a1.count(a3) != a2.count(a3):
-                        flag = True
-            if flag or not agari2:
+                if a1.equal(a2):
+                    flag = False
+                    break
+            if flag:
                 agari2.append(a1)
         return agari2
 
@@ -453,17 +465,16 @@ class Tehai:
                 for a1 in agari:
                     if a1 not in self.agari:
                         self.agari.append(a1)
-                        a1.extend(self.furo)
-                        for p in a1:
+                        for p in a1.get_all():
                             print("".join([dic[x] for x in p]), end=" ")
                         print()
-                        chanta = self.chanta(a1)
-                        toitoi = self.toitoi(a1)
-                        sansyoku = self.sansyoku(a1)
-                        peko = self.peko(a1)
-                        sangen = self.sangen(a1)
-                        sushi = self.sushi(a1)
-                        anko = self.anko([x for x in a1 if x not in self.furo])
+                        chanta = self.chanta(a1.get_all())
+                        toitoi = self.toitoi(a1.get_all())
+                        sansyoku = self.sansyoku(a1.get_all())
+                        peko = self.peko(a1.get_all())
+                        sangen = self.sangen(a1.get_all())
+                        sushi = self.sushi(a1.get_all())
+                        anko = self.anko([x for x in a1.get_all() if x not in self.furo])
                         iso = self.iso()
                         kantsu = self.kantsu(self.furo)
                         yaku = ""
@@ -487,7 +498,7 @@ class Tehai:
                             print(yaku)
                             return True
                         han = 0
-                        if self.pinfu(a1):
+                        if self.pinfu(a1.get_all()):
                             yaku += " 1翻 平和\n"
                             han += 1
                         if toitoi:
@@ -514,7 +525,7 @@ class Tehai:
                         if peko == 1:
                             yaku += " 1翻 一盃口\n"
                             han += 1
-                        if self.ittsu(a1):
+                        if self.ittsu(a1.get_all()):
                             yaku += f" {1 if self.furo else 2}翻 一気通貫\n"
                             han += 1 if self.furo else 2
                         if sangen == 1:
@@ -538,7 +549,7 @@ class Tehai:
                         if not self.furo:
                             yaku += " 1翻 門前清自摸和\n"
                             han += 1
-                        yakuhai = self.yakuhai(a1)
+                        yakuhai = self.yakuhai(a1.get_all())
                         for y in yakuhai:
                             yaku += f" 1翻 {dic[y]}\n"
                             han += 1
