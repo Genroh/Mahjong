@@ -10,6 +10,7 @@ import pdb
 
 # 牌に使う数値と文字の対応
 lst = [i for i in range(11, 48) if i % 10 != 0]
+yaochu = tuple(i for i in lst if i%10 in (1, 9) or i//10 == 4)
 conv = ('一', '二', '三', '四', '五', '六', '七', '八', '九',
         '１', '２', '３', '４', '５', '６', '７', '８', '９',
         'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ',
@@ -79,6 +80,28 @@ class Agari:
         else:
             self.kan.append(kan)
 
+    def get_fu(self):
+        try:
+            return self.fu
+        except:
+            self.fu = 20
+        if self.janto in yaochu:
+            self.fu += 4 if len(set(ba, self.kaze, self.janto)) == 1 else 2
+        for po in self.fu_ko:
+            self.fu += 4 if po[0] in yaochu else 2
+        for po in self.ko:
+            self.fu += 8 if po[0] in yaochu else 4
+        for po in self.fu_kan:
+            self.fu += 16 if po[0] in yaochu else 8
+        for po in self.kan:
+            self.fu += 32 if po[0] in yaochu else 16
+        for to in janto:
+            if to < 0:
+                self.fu += 2
+        for syu in self.syu:
+            if syu[1] < 0:
+                self.fu += 2
+        return self.fu
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -363,7 +386,7 @@ class Tehai:
             if [abs(x) for x in p0].count(abs(p0[0])) != 1:
                 return False
             if p0[0] * p0[-1] < 0:
-                if [x % 10 for x in p0 if self.tsumo != x] in [[1, 2], [8, 9]]:
+                if [x % 10 for x in p0 if x > 0] in [[1, 2], [8, 9]]:
                     return False
                 pinfu = True
         return pinfu
