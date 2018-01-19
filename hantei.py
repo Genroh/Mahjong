@@ -60,11 +60,15 @@ class Agari:
                 self.syu.append(men)
             else:
                 self.ko.append(men)
-        fu_ap = {1:self.fu_syu.append, 3:self.fu_ko.append, 4:self.split_kan}
+        fu_ap = {
+                1:self.fu_syu.append,
+                3:self.fu_ko.append,
+                4:self.__split_kan
+        }
         for fu in furo:
             fu_ap[[abs(x) for x in fu].count(abs(fu[0]))](fu)
 
-    def split_kan(self, kan):
+    def __split_kan(self, kan):
         furo = False
         for k in kan:
             if k < 0:
