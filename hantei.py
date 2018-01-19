@@ -6,7 +6,6 @@
 import os
 import sys
 import random
-import pdb
 
 # 牌に使う数値と文字の対応
 lst = [i for i in range(11, 48) if i % 10 != 0]
@@ -50,8 +49,32 @@ def lsteq(lst1, lst2):
             return False
     return True
 
-# アガリ形を分解して保持するクラス
-class Agari:
+# アガリ形を分解して保持するクラス群
+class Kokushi:
+    def __init__(self, te):
+        self.te = te
+
+    def get_all(self):
+        return sorted(self.te, key=lambda x:abs(x))
+
+
+class Churen:
+    def __init__(self, te):
+        self.te = te
+
+    def get_all(self):
+        return sorted(self.te, key=lambda x:abs(x))
+
+
+class Chitoi:
+    def __init__(self, te):
+        self.te = te
+
+    def get_all(self):
+        return self.te
+
+
+class Mentsu:
     def __init__(self, tsumo, kaze, te, furo):
         self.tsumo = tsumo
         self.kaze = kaze
@@ -209,7 +232,7 @@ class Tehai:
                     if self.tsumo in tmp[i]:
                         alt = tmp[i].copy()
                         alt[alt.index(self.tsumo)] *= -1
-                        agari.append(Agari(
+                        agari.append(Mentsu(
                             True, ji, tmp[:i]+[alt]+tmp[i+1:], self.furo
                         ))
 #                 agari.append([[t2]*2]+ko+syu)
@@ -233,7 +256,7 @@ class Tehai:
                     if self.tsumo in tmp[i]:
                         alt = tmp[i].copy()
                         alt[alt.index(self.tsumo)] *= -1
-                        agari.append(Agari(
+                        agari.append(Mentsu(
                             True, ji, tmp[:i]+[alt]+tmp[i+1:], self.furo
                         ))
 #                 agari.append([[t2]*2]+ko+syu)
@@ -437,13 +460,12 @@ class Tehai:
 
 # アガリ状態かどうか判定する
     def hantei(self, flag):
-        tmp = []
-        for t in sorted(self.tehai):
-            if t not in tmp:
-                tmp.append(t)
-        if tmp == [11, 19, 21, 29, 31, 39, 41, 42, 43, 44, 45, 46, 47]:
+        if set(self.tehai) == set(yaochu):
+            tmp = self.tehai.copy()
+            tmp[tmp.index(self.tsumo)] *= -1
+            self.agari = [Kokushi(tmp)]
             if flag:
-                print(*[dic[x] for x in self.tehai])
+                print(*[dic[x] for x in self.agari[0].get_all()])
                 print(" 役満 国士無双")
             return True
 
@@ -452,8 +474,11 @@ class Tehai:
                 continue
             if self.tehai.count(i*10+1) >= 3 \
                     and self.tehai.count(i*10+9) >= 3:
+                tmp = self.tehai.copy()
+                tmp[tmp.index(self.tsumo)] *= -1
+                self.agari = [Churen(tmp)]
                 if flag:
-                    print(*[dic[x] for x in self.tehai])
+                    print(*[dic[x] for x in self.agari[0].get_all()])
                     print(" 役満 九蓮宝燈")
                 return True
 
@@ -559,9 +584,14 @@ class Tehai:
             return True
 
         if len(self.count_toi()) == 7:
+            tmp = [[x, x] for x in self.count_toi()]
+            for t in tmp:
+                if t[0] == self.tsumo:
+                    t[0] *= -1
+            self.agari = [Chitoi(tmp)]
             if flag:
-                for x in self.count_toi():
-                    print(dic[x]+dic[x], end=" ")
+                for p in self.agari[0].get_all():
+                    print("".join([dic[x] for x in p]), end=" ")
                 print()
                 yaku = ""
                 han = 0
