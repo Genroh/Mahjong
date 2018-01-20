@@ -114,7 +114,7 @@ class Mentsu:
             return self.fu
         except:
             self.fu = 20
-        if abs(self.janto[0]) in yaochu:
+        if abs(self.janto[0]) in range(41, 48):
             self.fu += 4 if abs(self.janto[0])==ba and ba==self.kaze else 2
         for po in self.fu_ko:
             self.fu += 4 if po[0] in yaochu else 2
