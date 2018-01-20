@@ -9,7 +9,7 @@ import random
 
 # 牌に使う数値と文字の対応
 lst = [i for i in range(11, 48) if i % 10 != 0]
-yaochu = tuple(i for i in lst if i%10 in (1, 9) or i//10 == 4)
+yaochu = tuple(i for i in lst if i % 10 in (1, 9) or i//10 == 4)
 conv = ('一', '二', '三', '四', '五', '六', '七', '八', '九',
         '１', '２', '３', '４', '５', '６', '７', '８', '９',
         'Ⅰ', 'Ⅱ', 'Ⅲ', 'Ⅳ', 'Ⅴ', 'Ⅵ', 'Ⅶ', 'Ⅷ', 'Ⅸ',
@@ -49,13 +49,157 @@ def lsteq(lst1, lst2):
             return False
     return True
 
+
+class Yaku:
+    def tanyao(self):
+        for hai in (abs(x) for y in self.get_all() for x in y):
+            if hai in yaochu:
+                return False
+        return True
+
+    def iso(self):
+        iso = {x//10 for x in (abs(x) for y in self.get_all() for x in y)}
+        if iso == {4}:
+            return 3
+        elif len(iso) == 1:
+            return 2
+        elif iso > {4}:
+            return 1
+        return 0
+
+    def ryuiso(self):
+        ryuiso = (32, 33, 34, 36, 38, 46)
+        for hai in (abs(x) for y in self.get_all() for x in y):
+            if hai not in ryuiso:
+                return False
+        return True
+
+    def kantsu(self):
+        kan = len(self.kan + self.fu_kan)
+        if kan == 4:
+            return 2
+        elif kan == 3:
+            return 1
+        return 0
+
+    def yakuhai(self):
+        yakuhai = []
+        for p0 in (tuple(map(abs, x)) for x in self.get_all()[1:]):
+            if p0.count(p0[0]) not in (3, 4):
+                continue
+            if p0[0] == ba:
+                yakuhai.append("場風")
+            if p0[0] == self.kaze:
+                yakuhai.append("自風")
+            if p0[0] in range(45, 48):
+                yakuhai.append(dic[p0[0]])
+        return yakuhai
+
+    def chanta(self):
+        chanta = 2
+        for p0 in (tuple(map(abs, x)) for x in self.get_all()):
+            pset = {p0[0], p0[-1]}
+            if not pset < {1, 9}:
+                chanta = 1
+                if not pset < {4}:
+                    return 0
+        return chanta
+
+    def sanshoku(self):
+        ones, tens = [], []
+        for p0 in (tuple(map(abs, x)) for x in self.get_all()[1:]):
+            if p0[0]//10 == 4:
+                continue
+            ones.append((i % 10 for i in p0[:3]))
+            tens.append(p0[0]//10)
+        sames = (ones.count(x) for x in ones)
+        if not {3, 4} & set(sames):
+            return 0
+        if 1 in sames:
+            ones.pop(sames.index(1))
+            tens.pop(sames.index(1))
+        if sorted(set(tens)) == (1, 2, 3):
+            if ones[0].count(ones[0][0]) == 1:
+                return 1
+            else:
+                return 2
+        return 0
+
+    def anko(self):
+        anko = len(self.ko)
+        if anko == 4:
+            return 2
+        elif anko == 3:
+            return 1
+        return 0
+
+    def peko(self):
+        if self.get_furo():
+            return False
+        peko = tuple(tuple(map(abs, x)) for x in self.syu)
+        sames = tuple(peko.count(x) for x in peko)
+        if set(sames) == {2}:
+            return 2
+        for i in sames:
+            if i >= 2:
+                return 1
+        return False
+
+    def ittsu(self):
+        syu = (tuple(map(abs, x)) for x in self.syu)
+        for i in range(1, 4):
+            ittsu = {
+                tuple(range(i*10+1, i*10+4)),
+                tuple(range(i*10+4, i*10+7)),
+                tuple(range(i*10+7, i*10+10))
+            }
+            if ittsu <= set(syu):
+                return True
+        return False
+
+    def toitoi(self):
+        toitoi = len(self.ko + self.kan + self.fu_ko + self.fu_kan)
+        if toitoi == 4:
+            return True
+        return False
+
+    def sangen(self):
+        sangen = [self.janto] + self.ko + self.kan + self.fu_ko + self.fu_kan
+        sangen = (tuple(map(abs, x)) for x in sangen)
+        sangen = (x for x in sangen if x[0] in range(45, 48))
+        if len(tuple(sangen)) != 3:
+            return 0
+        elif self.janto in range(45, 48):
+            return 1
+        return 2
+
+    def sushi(self):
+        sushi = [self.janto] + self.ko + self.kan + self.fu_ko + self.fu_kan
+        sushi = (tuple(map(abs, x)) for x in sushi)
+        sushi = (x for x in sushi if x[0] in range(41, 45))
+        if len(tuple(sushi)) != 4:
+            return 0
+        elif self.janto in range(41, 45):
+            return 1
+        return 2
+
+    def pinfu(self):
+        if len(self.syu) != 4 or abs(self.janto[0]) in (ba, self.kaze):
+            return False
+        for p0 in self.syu:
+            if p0[0] * p0[-1] < 0:
+                if (x % 10 for x in p0 if x > 0) in ((1, 2), (8, 9)):
+                    return False
+        return True
+
+
 # アガリ形を分解して保持するクラス群
 class Kokushi:
     def __init__(self, te):
         self.te = te
 
     def get_all(self):
-        return sorted(self.te, key=lambda x:abs(x))
+        return sorted(self.te, key=lambda x: abs(x))
 
 
 class Churen:
@@ -63,10 +207,10 @@ class Churen:
         self.te = te
 
     def get_all(self):
-        return sorted(self.te, key=lambda x:abs(x))
+        return sorted(self.te, key=lambda x: abs(x))
 
 
-class Chitoi:
+class Chitoi(Yaku):
     def __init__(self, te):
         self.te = te
 
@@ -74,7 +218,7 @@ class Chitoi:
         return self.te
 
 
-class Mentsu:
+class Mentsu(Yaku):
     def __init__(self, tsumo, kaze, te, furo):
         self.tsumo = tsumo
         self.kaze = kaze
@@ -91,9 +235,9 @@ class Mentsu:
             else:
                 self.ko.append(men)
         fu_ap = {
-                1:self.fu_syu.append,
-                3:self.fu_ko.append,
-                4:self.__split_kan
+                1: self.fu_syu.append,
+                3: self.fu_ko.append,
+                4: self.__split_kan
         }
         for fu in furo:
             fu_ap[[abs(x) for x in fu].count(abs(fu[0]))](fu)
@@ -111,26 +255,28 @@ class Mentsu:
 
     def get_fu(self):
         try:
-            return self.fu
-        except:
-            self.fu = 20
+            return self.__fu
+        except Exception as e:
+            self.__fu = 20
         if abs(self.janto[0]) in range(41, 48):
-            self.fu += 4 if abs(self.janto[0])==ba and ba==self.kaze else 2
+            self.__fu += (
+                4 if abs(self.janto[0]) == ba and ba == self.kaze else 2
+            )
         for po in self.fu_ko:
-            self.fu += 4 if po[0] in yaochu else 2
+            self.__fu += 4 if po[0] in yaochu else 2
         for po in self.ko:
-            self.fu += 8 if po[0] in yaochu else 4
+            self.__fu += 8 if po[0] in yaochu else 4
         for po in self.fu_kan:
-            self.fu += 16 if po[0] in yaochu else 8
+            self.__fu += 16 if po[0] in yaochu else 8
         for po in self.kan:
-            self.fu += 32 if po[0] in yaochu else 16
+            self.__fu += 32 if po[0] in yaochu else 16
         for to in self.janto:
             if to < 0:
-                self.fu += 2
+                self.__fu += 2
         for syu in self.syu:
             if syu[1] < 0:
-                self.fu += 2
-        return self.fu
+                self.__fu += 2
+        return self.__fu
 
     def equal(self, agari):
         lst = [
@@ -143,18 +289,19 @@ class Mentsu:
                 lsteq(self.fu_kan, agari.fu_kan)
         ]
         for ls in lst:
-            if ls == False:
+            if not ls:
                 return False
         return True
 
     def get_te(self):
-        return [self.janto] + self.ko + self.syu
+        return [self.janto] + self.ko + self.syu + self.kan
 
     def get_furo(self):
         return self.fu_ko + self.fu_syu + self.fu_kan
 
     def get_all(self):
         return self.get_te() + self.get_furo()
+
 
 # 手牌を管理したり上がり形判定したりするクラス
 # 判定部分は後で分離した方がいい気もする
@@ -178,7 +325,7 @@ class Tehai:
             self.tsumo = self.tehai[-1]
 
 # 刻子をカウントする
-    def pop_kotsu(self, te):
+    def pop_kotsu(cls, te):
         ko, t = [], te.copy()
         for s in te:
             if t.count(s) >= 3:
@@ -187,7 +334,7 @@ class Tehai:
         return ko, t
 
 # 順子をカウントする
-    def pop_shuntsu(self, te):
+    def pop_shuntsu(cls, te):
         syu, t = [], te.copy()
         for s in te:
             if s//10 == 4:
@@ -224,8 +371,8 @@ class Tehai:
             t1 = t.copy()
             ko = []
             syu = []
-            ko, t1 = self.pop_kotsu(t1)
-            syu, t1 = self.pop_shuntsu(t1)
+            ko, t1 = Tehai.pop_kotsu(t1)
+            syu, t1 = Tehai.pop_shuntsu(t1)
             if len(ko+syu+self.furo) == 4:
                 tmp = [[t2]*2]+ko+syu
                 for i in range(len(tmp)):
@@ -240,16 +387,16 @@ class Tehai:
 #             t1 = t.copy()
 #             ko = []
 #             syu = []
-#             ko, t1 = self.pop_kotsu(t1)
-#             syu, t1 = self.pop_shuntsu(t1[::-1])
+#             ko, t1 = Tehai.pop_kotsu(t1)
+#             syu, t1 = Tehai.pop_shuntsu(t1[::-1])
 #             if len(ko+syu+self.furo) == 4:
 #                 agari.append([[t2]*2]+ko+syu[::-1])
 # 順子優先、順子は正順
             t1 = t.copy()
             ko = []
             syu = []
-            syu, t1 = self.pop_shuntsu(t1)
-            ko, t1 = self.pop_kotsu(t1)
+            syu, t1 = Tehai.pop_shuntsu(t1)
+            ko, t1 = Tehai.pop_kotsu(t1)
             if len(ko+syu+self.furo) == 4:
                 tmp = [[t2]*2]+ko+syu
                 for i in range(len(tmp)):
@@ -264,8 +411,8 @@ class Tehai:
 #             t1 = t.copy()
 #             ko = []
 #             syu = []
-#             syu, t1 = self.pop_shuntsu(t1[::-1])
-#             ko, t1 = self.pop_kotsu(t1)
+#             syu, t1 = Tehai.pop_shuntsu(t1[::-1])
+#             ko, t1 = Tehai.pop_kotsu(t1)
 #             if len(ko+syu+self.furo) == 4:
 #                 agari.append([[t2]*2]+(syu+ko)[::-1])
         agari2 = []
@@ -714,6 +861,8 @@ if __name__ == '__main__':
                 continue
 # 'ba' で場風指定, 'ji' で自風指定
             if usrinput and usrinput.split()[0] in ['ba', 'ji']:
+                if len(usrinput.split()) != 2:
+                    continue
                 if usrinput.split()[1].isdigit():
                     if int(usrinput.split()[1]) in [41, 42, 43, 44]:
                         if usrinput.split()[0] == 'ba':
