@@ -325,6 +325,7 @@ class Tehai:
             self.tsumo = self.tehai[-1]
 
 # 刻子をカウントする
+    @classmethod
     def pop_kotsu(cls, te):
         ko, t = [], te.copy()
         for s in te:
@@ -334,6 +335,7 @@ class Tehai:
         return ko, t
 
 # 順子をカウントする
+    @classmethod
     def pop_shuntsu(cls, te):
         syu, t = [], te.copy()
         for s in te:
