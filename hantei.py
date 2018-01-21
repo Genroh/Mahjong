@@ -213,6 +213,29 @@ class Churen:
 class Chitoi(Yaku):
     def __init__(self, te):
         self.te = te
+        self.__fu = 25
+
+    def get_fu(self):
+        return self.__fu
+
+    def get_yaku(self):
+        yaku = []
+        iso = self.iso()
+        if iso == 2:
+            yaku.append("yakuman tsuiso")
+            return yaku
+        yaku.append("2翻 chitoi")
+        chanta = self.chanta()
+        tanyao = self.tanyao()
+        if chanta == 2:
+            yaku.append("junchan")
+        elif chanta == 1:
+            yaku.append("honchan")
+        if iso == 1:
+            yaku.append("honiso")
+        if tanyao:
+            yaku.append("tanyao")
+        return yaku
 
     def get_all(self):
         return self.te
