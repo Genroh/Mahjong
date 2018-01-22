@@ -223,13 +223,15 @@ class Chitoi(Yaku):
     def get_yaku(self):
         yaku = []
         iso = self.iso()
-        if iso == 2:
+        if iso == 3:
             yaku.append("役満 字一色")
             return yaku
         yaku.append("2翻 七対子")
         chanta = self.chanta()
         tanyao = self.tanyao()
-        if iso == 1:
+        if iso == 2:
+            yaku.append("6翻 清一色")
+        elif iso == 1:
             yaku.append("3翻 混一色")
         if chanta:
             yaku.append("2翻 混老頭")
