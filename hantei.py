@@ -63,7 +63,7 @@ class Yaku:
             return 3
         elif len(iso) == 1:
             return 2
-        elif iso > {4}:
+        elif len(iso) == 2 and iso > {4}:
             return 1
         return 0
 
@@ -98,11 +98,12 @@ class Yaku:
     def chanta(self):
         chanta = 2
         for p0 in (tuple(map(abs, x)) for x in self.get_all()):
-            pset = {p0[0], p0[-1]}
-            if not pset < {1, 9}:
+            ptuple = (p0[0], p0[-1])
+            if set(map(lambda x: x//10, ptuple)) == {4}:
                 chanta = 1
-                if not pset < {4}:
-                    return 0
+                continue
+            if not set(map(lambda x: x % 10, ptuple)) & {1, 9}:
+                return 0
         return chanta
 
     def sanshoku(self):
@@ -211,7 +212,8 @@ class Churen:
 
 
 class Chitoi(Yaku):
-    def __init__(self, te):
+    def __init__(self, tsumo, te):
+        self.tsumo = tsumo
         self.te = te
         self.__fu = 25
 
@@ -222,19 +224,21 @@ class Chitoi(Yaku):
         yaku = []
         iso = self.iso()
         if iso == 2:
-            yaku.append("yakuman tsuiso")
+            yaku.append("役満 字一色")
             return yaku
-        yaku.append("2翻 chitoi")
+        yaku.append("2翻 七対子")
         chanta = self.chanta()
         tanyao = self.tanyao()
         if chanta == 2:
-            yaku.append("junchan")
+            yaku.append("3翻 純チャン")
         elif chanta == 1:
-            yaku.append("honchan")
+            yaku.append("2翻 チャンタ")
         if iso == 1:
-            yaku.append("honiso")
+            yaku.append("3翻 混一色")
         if tanyao:
-            yaku.append("tanyao")
+            yaku.append("1翻 たんやお")
+        if self.tsumo:
+            yaku.append("1翻 門前清自摸和")
         return yaku
 
     def get_all(self):
@@ -297,7 +301,7 @@ class Mentsu(Yaku):
             if to < 0:
                 self.__fu += 2
         for syu in self.syu:
-            if syu[1] < 0:
+            if syu[1] < 0 and [x for x in syu if x > 0] in ([1, 2], [8, 9]):
                 self.__fu += 2
         return self.__fu
 
@@ -760,7 +764,7 @@ class Tehai:
             for t in tmp:
                 if t[0] == self.tsumo:
                     t[0] *= -1
-            self.agari = [Chitoi(tmp)]
+            self.agari = [Chitoi(True, tmp)]
             if flag:
                 for p in self.agari[0].get_all():
                     print("".join([dic[x] for x in p]), end=" ")
