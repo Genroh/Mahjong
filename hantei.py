@@ -229,12 +229,10 @@ class Chitoi(Yaku):
         yaku.append("2翻 七対子")
         chanta = self.chanta()
         tanyao = self.tanyao()
-        if chanta == 2:
-            yaku.append("3翻 純チャン")
-        elif chanta == 1:
-            yaku.append("2翻 チャンタ")
         if iso == 1:
             yaku.append("3翻 混一色")
+        if chanta:
+            yaku.append("2翻 混老頭")
         if tanyao:
             yaku.append("1翻 たんやお")
         if self.tsumo:
