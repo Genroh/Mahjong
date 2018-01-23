@@ -280,6 +280,21 @@ class Mentsu(Yaku):
         else:
             self.kan.append(kan)
 
+    def equal(self, agari):
+        lst = [
+                lsteq(self.janto, agari.janto),
+                lsteq(self.syu, agari.syu),
+                lsteq(self.ko, agari.ko),
+                lsteq(self.kan, agari.kan),
+                lsteq(self.fu_syu, agari.fu_syu),
+                lsteq(self.fu_ko, agari.fu_ko),
+                lsteq(self.fu_kan, agari.fu_kan)
+        ]
+        for ls in lst:
+            if not ls:
+                return False
+        return True
+
     def get_fu(self):
         try:
             return self.__fu
@@ -305,20 +320,9 @@ class Mentsu(Yaku):
                 self.__fu += 2
         return self.__fu
 
-    def equal(self, agari):
-        lst = [
-                lsteq(self.janto, agari.janto),
-                lsteq(self.syu, agari.syu),
-                lsteq(self.ko, agari.ko),
-                lsteq(self.kan, agari.kan),
-                lsteq(self.fu_syu, agari.fu_syu),
-                lsteq(self.fu_ko, agari.fu_ko),
-                lsteq(self.fu_kan, agari.fu_kan)
-        ]
-        for ls in lst:
-            if not ls:
-                return False
-        return True
+    def get_yaku(self):
+        yaku = []
+        return yaku
 
     def get_te(self):
         return [self.janto] + self.ko + self.syu + self.kan
