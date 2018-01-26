@@ -22,7 +22,7 @@ tannyao = "1翻 たんやお"
 tsumo = "1翻 門前清自摸和"
 bakaze = "1翻 場風"
 jikaze = "1翻 自風"
-sangen = ("1翻 白", "1翻 發"， "1翻 中")
+sangen = ("1翻 白", "1翻 發", "1翻 中")
 
 def junchan(flag):
     return f"{2 if flag else 3}翻 純チャン"

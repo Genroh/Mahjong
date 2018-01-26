@@ -7,6 +7,8 @@ import os
 import sys
 import random
 
+import yaku
+
 # 牌に使う数値と文字の対応
 lst = [i for i in range(11, 48) if i % 10 != 0]
 yaochu = tuple(i for i in lst if i % 10 in (1, 9) or i//10 == 4)
@@ -325,7 +327,7 @@ class Mentsu(Yaku):
         toitoi = self.toitoi()
         sanshoku = self.sanshoku()
         peko = self.peko()
-        sansgen = self.sangen()
+        sangen = self.sangen()
         sushi = self.sushi()
         anko = self.anko()
         iso = self.iso()
@@ -339,7 +341,7 @@ class Mentsu(Yaku):
         if sushi == 2:
             lst.append(yaku.daisushi)
         if sushi == 1:
-            lst.append(yaku.shousushi)
+            lst.append(yaku.shosushi)
         if anko == 2:
             lst.append(yaku.suanko)
         if kantsu == 2:
@@ -354,58 +356,58 @@ class Mentsu(Yaku):
         self.han = 0
         if self.pinfu():
             lst.append(yaku.pinfu)
-            han += 1
+            self.han += 1
         if toitoi:
             lst.append(yaku.toitoi)
-            han += 2
+            self.han += 2
         if chanta == 2 and not toitoi:
-            lst.append(yaku.junchan(self.furo))
-            han += 2 if self.furo else 3
+            lst.append(yaku.junchan(self.get_furo()))
+            self.han += 2 if self.get_furo() else 3
         if chanta == 1 and toitoi:
             lst.append(yaku.honroto)
-            han += 2
+            self.han += 2
         if chanta == 1 and not toitoi:
-            lst.append(yaku.chanta(self.furo))
-            han += 1 if self.furo else 2
+            lst.append(yaku.chanta(self.get_furo()))
+            self.han += 1 if self.get_furo() else 2
         if sanshoku == 2:
             lst.append(yaku.doko)
-            han += 2
+            self.han += 2
         if sanshoku == 1:
-            lst.append(yaku.doujun(self.furo))
-            han += 1 if self.furo else 2
+            lst.append(yaku.doujun(self.get_furo()))
+            self.han += 1 if self.get_furo() else 2
         if peko == 2:
             lst.append(yaku.peko(2))
-            han += 3
+            self.han += 3
         if peko == 1:
             lst.append(yaku.peko(1))
-            han += 1
+            self.han += 1
         if self.ittsu():
-            lst.append(yaku.ittsu)
-            han += 1 if self.furo else 2
+            lst.append(yaku.ittsu(self.get_furo()))
+            self.han += 1 if self.get_furo() else 2
         if sangen == 1:
             lst.append(yaku.shosangen)
-            han += 2
+            self.han += 2
         if anko == 1:
             lst.append(yaku.sannanko)
-            han += 2
+            self.han += 2
         if kantsu == 1:
             lst.append(yaku.sankantsu)
-            han += 2
+            self.han += 2
         if self.tannyao():
             lst.append(yaku.tannyao)
-            han += 1
+            self.han += 1
         if iso == 2:
-            lst.append(yaku.chiniso(self.furo))
-            han += 5 if self.furo else 6
+            lst.append(yaku.chiniso(self.get_furo()))
+            self.han += 5 if self.get_furo() else 6
         if iso == 1:
-            lst.append(yaku.honiso(self.furo))
-            han += 2 if self.furo else 3
-        if not self.furo:
+            lst.append(yaku.honniso(self.get_furo()))
+            self.han += 2 if self.get_furo() else 3
+        if not self.get_furo():
             lst.append(yaku.tsumo)
-            han += 1
+            self.han += 1
         for y in self.yakuhai():
             lst.append(y)
-            han += 1
+            self.han += 1
         return lst
 
     def get_te(self):
