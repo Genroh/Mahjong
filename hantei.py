@@ -416,8 +416,14 @@ class Mentsu(Yaku):
     def point(self):
         fu = (self.fu//10+1) * 10 if self.fu % 10 else self.fu
         return fu * (2 ** (self.han + 2))
+
     def get_point(self):
-        return self.__point
+        point_b = [self.point()] * 2
+        point_b[0] *= 2
+        point = []
+        for p0 in point_b:
+            point.append((p0//100 + 1) * 100 if p0 % 100 else p0)
+        return point
 
     def get_te(self):
         return [self.janto] + self.ko + self.syu + self.kan
