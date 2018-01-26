@@ -269,7 +269,10 @@ class Mentsu(Yaku):
                 4: self.__split_kan
         }
         for fu in furo:
-            fu_ap[[abs(x) for x in fu].count(abs(fu[0]))](fu)
+            fu_ap[(abs(x) for x in fu).count(abs(fu[0]))](fu)
+        self.fu = self.get_fu()
+        self.yaku = self.get_yaku()
+        self.__point = self.point()
 
     def __split_kan(self, kan):
         furo = False
@@ -409,6 +412,12 @@ class Mentsu(Yaku):
             lst.append(y)
             self.han += 1
         return lst
+
+    def point(self):
+        fu = (self.fu//10+1) * 10 if self.fu % 10 else self.fu
+        return fu * (2 ** (self.han + 2))
+    def get_point(self):
+        return self.__point
 
     def get_te(self):
         return [self.janto] + self.ko + self.syu + self.kan
