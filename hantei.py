@@ -316,7 +316,7 @@ class Mentsu(Yaku):
             if to < 0:
                 self.__fu += 2
         for syu in self.syu:
-            if syu[1] < 0 and [x for x in syu if x > 0] in ([1, 2], [8, 9]):
+            if syu[1] < 0 or [x for x in syu if x > 0] in ([1, 2], [8, 9]):
                 self.__fu += 2
         return self.__fu
 
