@@ -51,7 +51,7 @@ def lsteq(lst1, lst2):
 
 
 class Yaku:
-    def tanyao(self):
+    def tannyao(self):
         for hai in (abs(x) for y in self.get_all() for x in y):
             if hai in yaochu:
                 return False
@@ -228,14 +228,14 @@ class Chitoi(Yaku):
             return yaku
         yaku.append("2翻 七対子")
         chanta = self.chanta()
-        tanyao = self.tanyao()
+        tannyao = self.tannyao()
         if iso == 2:
             yaku.append("6翻 清一色")
         elif iso == 1:
             yaku.append("3翻 混一色")
         if chanta:
             yaku.append("2翻 混老頭")
-        if tanyao:
+        if tannyao:
             yaku.append("1翻 たんやお")
         if self.tsumo:
             yaku.append("1翻 門前清自摸和")
@@ -321,8 +321,92 @@ class Mentsu(Yaku):
         return self.__fu
 
     def get_yaku(self):
-        yaku = []
-        return yaku
+        chanta = self.chanta()
+        toitoi = self.toitoi()
+        sanshoku = self.sanshoku()
+        peko = self.peko()
+        sansgen = self.sangen()
+        sushi = self.sushi()
+        anko = self.anko()
+        iso = self.iso()
+        kantsu = self.kantsu()
+
+        lst = []
+        if chanta == 2 and toitoi:
+            lst.append(yaku.chinroto)
+        if sangen == 2:
+            lst.append(yaku.daisangen)
+        if sushi == 2:
+            lst.append(yaku.daisushi)
+        if sushi == 1:
+            lst.append(yaku.shousushi)
+        if anko == 2:
+            lst.append(yaku.suanko)
+        if kantsu == 2:
+            lst.append(yaku.sukantsu)
+        if iso == 3:
+            lst.append(yaku.tsuiso)
+        if self.ryuiso():
+            lst.append(yaku.ryuiso)
+        if lst:
+            print(lst)
+            return
+        self.han = 0
+        if self.pinfu():
+            lst.append(yaku.pinfu)
+            han += 1
+        if toitoi:
+            lst.append(yaku.toitoi)
+            han += 2
+        if chanta == 2 and not toitoi:
+            lst.append(yaku.junchan(self.furo))
+            han += 2 if self.furo else 3
+        if chanta == 1 and toitoi:
+            lst.append(yaku.honroto)
+            han += 2
+        if chanta == 1 and not toitoi:
+            lst.append(yaku.chanta(self.furo))
+            han += 1 if self.furo else 2
+        if sanshoku == 2:
+            lst.append(yaku.doko)
+            han += 2
+        if sanshoku == 1:
+            lst.append(yaku.doujun(self.furo))
+            han += 1 if self.furo else 2
+        if peko == 2:
+            lst.append(yaku.peko(2))
+            han += 3
+        if peko == 1:
+            lst.append(yaku.peko(1))
+            han += 1
+        if self.ittsu():
+            lst.append(yaku.ittsu)
+            han += 1 if self.furo else 2
+        if sangen == 1:
+            lst.append(yaku.shosangen)
+            han += 2
+        if anko == 1:
+            lst.append(yaku.sannanko)
+            han += 2
+        if kantsu == 1:
+            lst.append(yaku.sankantsu)
+            han += 2
+        if self.tannyao():
+            lst.append(yaku.tannyao)
+            han += 1
+        if iso == 2:
+            lst.append(yaku.chiniso(self.furo))
+            han += 5 if self.furo else 6
+        if iso == 1:
+            lst.append(yaku.honiso(self.furo))
+            han += 2 if self.furo else 3
+        if not self.furo:
+            lst.append(yaku.tsumo)
+            han += 1
+        for y in self.yakuhai():
+            lst.append(y)
+            han += 1
+        return lst
 
     def get_te(self):
         return [self.janto] + self.ko + self.syu + self.kan
@@ -460,7 +544,7 @@ class Tehai:
         return agari2
 
 # タンヤオ
-    def tanyao(self):
+    def tannyao(self):
         for hai in self.tehai + [x for y in self.furo for x in y]:
             if hai//10 == 4 or hai % 10 == 1 or hai % 10 == 9:
                 return False
@@ -742,7 +826,7 @@ class Tehai:
                         if kantsu == 1:
                             yaku += " 2翻 三槓子\n"
                             han += 2
-                        if self.tanyao():
+                        if self.tannyao():
                             yaku += " 1翻 たんやお\n"
                             han += 1
                         if iso == 2:
@@ -785,7 +869,7 @@ class Tehai:
                 if chanta == 1:
                     yaku += " 2翻 混老頭\n"
                     han += 2
-                if self.tanyao():
+                if self.tannyao():
                     yaku += " 1翻 たんやお\n"
                     han += 1
                 if iso == 2:
