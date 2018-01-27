@@ -269,7 +269,7 @@ class Mentsu(Yaku):
                 4: self.__split_kan
         }
         for fu in furo:
-            fu_ap[(abs(x) for x in fu).count(abs(fu[0]))](fu)
+            fu_ap[tuple(abs(x) for x in fu).count(abs(fu[0]))](fu)
         self.fu = self.get_fu()
         self.yaku = self.get_yaku()
         self.__point = self.point()
@@ -305,7 +305,7 @@ class Mentsu(Yaku):
             return self.__fu
         except Exception as e:
             self.__fu = 20
-        if abs(self.janto[0]) in range(41, 48):
+        if abs(self.janto[0]) in (ba, self.kaze, tuple(range(45, 48))):
             self.__fu += (
                 4 if abs(self.janto[0]) == ba and ba == self.kaze else 2
             )
@@ -336,27 +336,35 @@ class Mentsu(Yaku):
         iso = self.iso()
         kantsu = self.kantsu()
 
+        self.han = 0
         lst = []
         if chanta == 2 and toitoi:
             lst.append(yaku.chinroto)
+            self.han += 13
         if sangen == 2:
             lst.append(yaku.daisangen)
+            self.han += 13
         if sushi == 2:
             lst.append(yaku.daisushi)
+            self.han += 26
         if sushi == 1:
             lst.append(yaku.shosushi)
+            self.han += 13
         if anko == 2:
             lst.append(yaku.suanko)
+            self.han += 13
         if kantsu == 2:
             lst.append(yaku.sukantsu)
+            self.han += 13
         if iso == 3:
             lst.append(yaku.tsuiso)
+            self.han += 13
         if self.ryuiso():
             lst.append(yaku.ryuiso)
+            self.han += 13
         if lst:
             print(lst)
             return
-        self.han = 0
         if self.pinfu():
             lst.append(yaku.pinfu)
             self.han += 1
@@ -414,16 +422,36 @@ class Mentsu(Yaku):
         return lst
 
     def point(self):
-        fu = (self.fu//10+1) * 10 if self.fu % 10 else self.fu
-        return fu * (2 ** (self.han + 2))
+        if self.han < 5:
+            fu = round(self.fu, -1)
+            base = fu * (2 ** (self.han + 2))
+            point = []
+            tmp = []
+            tmp.append([])
+            tmp[0].append((round(base*4, -2),))
+            tmp[0].append((round(base*2, -2), round(base, -2)))
+            point.append(tuple(tmp.pop(0)))
+            tmp.append([])
+            tmp[0].append((round(base*6, -2),))
+            tmp[0].append((round(base*2, -2),))
+            point.append(tuple(tmp.pop(0)))
+        elif self.han >= 5:
+            base = 200
+            if self.han < 5:
+                base *= 10
+            elif self.han < 8:
+                base *= 15
+            elif self.han < 11:
+                base *= 20
+            elif self.han < 13:
+                base *= 30
+            elif self.han >= 13:
+                base *= 40 * self.han // 13
+            point = (((base*4,), (base*2, base)), ((base*6,), (base*2,)))
+        return tuple(point)
 
-    def get_point(self):
-        point_b = [self.point()] * 2
-        point_b[0] *= 2
-        point = []
-        for p0 in point_b:
-            point.append((p0//100 + 1) * 100 if p0 % 100 else p0)
-        return point
+    def get_point(self, oya, tsumo):
+        return self.__point
 
     def get_te(self):
         return [self.janto] + self.ko + self.syu + self.kan
