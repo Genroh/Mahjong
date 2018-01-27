@@ -172,7 +172,7 @@ class Yaku:
         sangen = (x for x in sangen if x[0] in range(45, 48))
         if len(tuple(sangen)) != 3:
             return 0
-        elif self.janto in range(45, 48):
+        if self.janto[0] in range(45, 48):
             return 1
         return 2
 
@@ -187,7 +187,9 @@ class Yaku:
         return 2
 
     def pinfu(self):
-        if len(self.syu) != 4 or abs(self.janto[0]) in (ba, self.kaze):
+        if len(self.syu) != 4 \
+                or abs(self.janto[0]) in (ba, self.kaze) \
+                or len(set(self.janto)) != 1:
             return False
         for p0 in self.syu:
             if p0[0] * p0[-1] < 0:
@@ -201,6 +203,9 @@ class Kokushi:
     def __init__(self, te):
         self.te = te
 
+    def get_yaku(self):
+        return yaku.kokushi
+
     def get_all(self):
         return sorted(self.te, key=lambda x: abs(x))
 
@@ -208,6 +213,9 @@ class Kokushi:
 class Churen:
     def __init__(self, te):
         self.te = te
+
+    def get_yaku(self):
+        return yaku.churen
 
     def get_all(self):
         return sorted(self.te, key=lambda x: abs(x))
@@ -363,8 +371,7 @@ class Mentsu(Yaku):
             lst.append(yaku.ryuiso)
             self.han += 13
         if lst:
-            print(lst)
-            return
+            return lst
         if self.pinfu():
             lst.append(yaku.pinfu)
             self.han += 1
@@ -775,7 +782,7 @@ class Tehai:
             self.agari = [Kokushi(tmp)]
             if flag:
                 print(*[dic[x] for x in self.agari[0].get_all()])
-                print(" 役満 国士無双")
+                print(" " + self.agari[0].get_yaku())
             return True
 
         for i in range(1, 4):
@@ -788,7 +795,7 @@ class Tehai:
                 self.agari = [Churen(tmp)]
                 if flag:
                     print(*[dic[x] for x in self.agari[0].get_all()])
-                    print(" 役満 九蓮宝燈")
+                    print(" " + self.agari[0].get_yaku())
                 return True
 
         agari = self.analysis()
@@ -802,6 +809,10 @@ class Tehai:
                         for p in a1.get_all():
                             print("".join([dic[x] for x in p]), end=" ")
                         print()
+                        for y in a1.get_yaku():
+                            print(f" {y}")
+                        print(f" {a1.get_fu()}符 {a1.han}翻")
+                        print(f" {a1.get_point(True, True)}\n")
                         chanta = self.chanta(a1.get_all())
                         toitoi = self.toitoi(a1.get_all())
                         sansyoku = self.sansyoku(a1.get_all())

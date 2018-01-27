@@ -3,6 +3,8 @@
 
 # Written By python 3.6.1
 
+kokushi = "役満 国士無双"
+churen = "役満 九蓮宝燈"
 chinroto = "役満 清老頭"
 honroto = "2翻 混老頭"
 daisangen = "役満 大三元"
@@ -41,4 +43,3 @@ def peko(num):
         return "3翻 二盃口"
     if num == 1:
         return "1翻 一盃口"
-
