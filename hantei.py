@@ -6,6 +6,7 @@
 import os
 import sys
 import random
+import math
 
 import yaku
 
@@ -50,6 +51,11 @@ def lsteq(lst1, lst2):
         if l1 not in lst2 or lst1.count(l1) != lst2.count(l1):
             return False
     return True
+
+
+def myceil(num, n=0):
+    myceil = math.ceil(num * 10**n) / 10**n
+    return myceil if n > 0 else math.floor(myceil)
 
 
 class Yaku:
@@ -430,17 +436,17 @@ class Mentsu(Yaku):
 
     def point(self):
         if self.han < 5:
-            fu = round(self.fu, -1)
+            fu = myceil(self.fu, -1)
             base = fu * (2 ** (self.han + 2))
             point = []
             tmp = []
             tmp.append([])
-            tmp[0].append((round(base*4, -2),))
-            tmp[0].append((round(base*2, -2), round(base, -2)))
+            tmp[0].append((myceil(base*4, -2),))
+            tmp[0].append((myceil(base*2, -2), myceil(base, -2)))
             point.append(tuple(tmp.pop(0)))
             tmp.append([])
-            tmp[0].append((round(base*6, -2),))
-            tmp[0].append((round(base*2, -2),))
+            tmp[0].append((myceil(base*6, -2),))
+            tmp[0].append((myceil(base*2, -2),))
             point.append(tuple(tmp.pop(0)))
         elif self.han >= 5:
             base = 200
