@@ -437,7 +437,7 @@ class Mentsu(Yaku):
     def point(self):
         if self.han < 5:
             fu = myceil(self.fu, -1)
-            base = fu * (2 ** (self.han + 2))
+            base = min(fu * (2 ** (self.han + 2)), 2000)
             point = []
             tmp = []
             tmp.append([])
@@ -450,7 +450,7 @@ class Mentsu(Yaku):
             point.append(tuple(tmp.pop(0)))
         elif self.han >= 5:
             base = 200
-            if self.han < 5:
+            if self.han < 6:
                 base *= 10
             elif self.han < 8:
                 base *= 15
