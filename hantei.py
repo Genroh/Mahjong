@@ -119,15 +119,15 @@ class Yaku:
         for p0 in (tuple(map(abs, x)) for x in self.get_all()[1:]):
             if p0[0]//10 == 4:
                 continue
-            ones.append((i % 10 for i in p0[:3]))
+            ones.append(tuple(i % 10 for i in p0[:3]))
             tens.append(p0[0]//10)
-        sames = (ones.count(x) for x in ones)
-        if not {3, 4} & set(sames):
+        sames = tuple(ones.count(x) for x in ones)
+        if not ({3, 4} & set(sames)):
             return 0
         if 1 in sames:
             ones.pop(sames.index(1))
             tens.pop(sames.index(1))
-        if sorted(set(tens)) == (1, 2, 3):
+        if sorted(set(tens)) == [1, 2, 3]:
             if ones[0].count(ones[0][0]) == 1:
                 return 1
             else:
