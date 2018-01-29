@@ -192,9 +192,9 @@ class Yaku:
                 or len(set(self.janto)) != 1:
             return False
         for p0 in self.syu:
-            if p0[0] * p0[-1] < 0:
-                if (x % 10 for x in p0 if x > 0) in ((1, 2), (8, 9)):
-                    return False
+            if p0[0] * p0[-1] > 0 \
+                    or (x % 10 for x in p0 if x > 0) in ((1, 2), (8, 9)):
+                return False
         return True
 
 
