@@ -192,8 +192,8 @@ class Yaku:
                 or len(set(self.janto)) != 1:
             return False
         for p0 in self.syu:
-            if p0[0] * p0[-1] > 0 \
-                    or (x % 10 for x in p0 if x > 0) in ((1, 2), (8, 9)):
+            if p0[1] < 0 \
+                    or tuple(x % 10 for x in p0 if x > 0) in ((1, 2), (8, 9)):
                 return False
         return True
 
@@ -811,96 +811,9 @@ class Tehai:
                         print()
                         for y in a1.get_yaku():
                             print(f" {y}")
+                        print()
                         print(f" {a1.get_fu()}符 {a1.han}翻")
                         print(f" {a1.get_point(True, True)}\n")
-                        chanta = self.chanta(a1.get_all())
-                        toitoi = self.toitoi(a1.get_all())
-                        sansyoku = self.sansyoku(a1.get_all())
-                        peko = self.peko(a1.get_all())
-                        sangen = self.sangen(a1.get_all())
-                        sushi = self.sushi(a1.get_all())
-                        anko = self.anko([x for x in a1.get_all() if x not in self.furo])
-                        iso = self.iso()
-                        kantsu = self.kantsu(self.furo)
-                        yaku = ""
-                        if chanta == 2 and toitoi:
-                            yaku += " 役満 清老頭\n"
-                        if sangen == 2:
-                            yaku += " 役満 大三元\n"
-                        if sushi == 2:
-                            yaku += " ダブル役満 大四喜\n"
-                        if sushi == 1:
-                            yaku += " 役満 小四喜\n"
-                        if anko == 2:
-                            yaku += " 役満 四暗刻\n"
-                        if kantsu == 2:
-                            yaku += " 役満 四槓子\n"
-                        if iso == 3:
-                            yaku += " 役満 字一色\n"
-                        if self.ryuiso():
-                            yaku += " 役満 緑一色\n"
-                        if yaku:
-                            print(yaku)
-                            return True
-                        han = 0
-                        if self.pinfu(a1.get_all()):
-                            yaku += " 1翻 平和\n"
-                            han += 1
-                        if toitoi:
-                            yaku += " 2翻 対々和\n"
-                            han += 2
-                        if chanta == 2 and not toitoi:
-                            yaku += f" {2 if self.furo else 3}翻 純チャン\n"
-                            han += 2 if self.furo else 3
-                        if chanta == 1 and toitoi:
-                            yaku += " 2翻 混老頭\n"
-                            han += 2
-                        if chanta == 1 and not toitoi:
-                            yaku += f" {1 if self.furo else 2}翻 チャンタ\n"
-                            han += 1 if self.furo else 2
-                        if sansyoku == 2:
-                            yaku += " 2翻 三色同刻\n"
-                            han += 2
-                        if sansyoku == 1:
-                            yaku += f" {1 if self.furo else 2}翻 三色同順\n"
-                            han += 1 if self.furo else 2
-                        if peko == 2:
-                            yaku += " 3翻 二盃口\n"
-                            han += 3
-                        if peko == 1:
-                            yaku += " 1翻 一盃口\n"
-                            han += 1
-                        if self.ittsu(a1.get_all()):
-                            yaku += f" {1 if self.furo else 2}翻 一気通貫\n"
-                            han += 1 if self.furo else 2
-                        if sangen == 1:
-                            yaku += " 2翻 小三元\n"
-                            han += 2
-                        if anko == 1:
-                            yaku += " 2翻 三暗刻\n"
-                            han += 2
-                        if kantsu == 1:
-                            yaku += " 2翻 三槓子\n"
-                            han += 2
-                        if self.tannyao():
-                            yaku += " 1翻 たんやお\n"
-                            han += 1
-                        if iso == 2:
-                            yaku += f" {5 if self.furo else 6}翻 清一色\n"
-                            han += 5 if self.furo else 6
-                        if iso == 1:
-                            yaku += f" {2 if self.furo else 3}翻 混一色\n"
-                            han += 2 if self.furo else 3
-                        if not self.furo:
-                            yaku += " 1翻 門前清自摸和\n"
-                            han += 1
-                        yakuhai = self.yakuhai(a1.get_all())
-                        for y in yakuhai:
-                            yaku += f" 1翻 {dic[y]}\n"
-                            han += 1
-                        if yaku:
-                            print(yaku)
-                            print(f" {a1.get_fu()}符 {han}翻\n")
             return True
 
         if len(self.count_toi()) == 7:
