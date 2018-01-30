@@ -232,29 +232,41 @@ class Chitoi(Yaku):
         self.tsumo = tsumo
         self.te = te
         self.__fu = 25
+        self.get_yaku()
 
     def get_fu(self):
         return self.__fu
 
+    def get_han(self):
+        return self.han
+
     def get_yaku(self):
         yaku = []
+        self.han = 0
         iso = self.iso()
         if iso == 3:
             yaku.append("役満 字一色")
+            self.han += 13
             return yaku
         yaku.append("2翻 七対子")
+        self.han += 2
         chanta = self.chanta()
         tannyao = self.tannyao()
         if iso == 2:
             yaku.append("6翻 清一色")
+            self.han += 6
         elif iso == 1:
             yaku.append("3翻 混一色")
+            self.han += 3
         if chanta:
             yaku.append("2翻 混老頭")
+            self.han += 2
         if tannyao:
             yaku.append("1翻 たんやお")
+            self.han += 1
         if self.tsumo:
             yaku.append("1翻 門前清自摸和")
+            self.han += 1
         return yaku
 
     def get_all(self):
@@ -832,6 +844,10 @@ class Tehai:
                 for p in self.agari[0].get_all():
                     print("".join([dic[x] for x in p]), end=" ")
                 print()
+                for y in self.agari[0].get_yaku():
+                    print(f" {y}")
+                print(f" {self.agari[0].get_fu()} {self.agari[0].get_han()}")
+                print(f" {self.agari[0].get_point()}")
                 yaku = ""
                 han = 0
                 chanta = self.chanta([[x] for x in self.count_toi()])
