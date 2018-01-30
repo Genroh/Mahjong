@@ -58,7 +58,7 @@ def myceil(num, n=0):
     return myceil if n > 0 else math.floor(myceil)
 
 
-class Yaku:
+class Agari:
     def tannyao(self):
         for hai in (abs(x) for y in self.get_all() for x in y):
             if hai in yaochu:
@@ -203,11 +203,41 @@ class Yaku:
                 return False
         return True
 
+    def cul_point(self):
+        if self.han < 5:
+            fu = myceil(self.fu, -1)
+            base = min(fu * (2 ** (self.han + 2)), 2000)
+            point = []
+            tmp = []
+            tmp.append([])
+            tmp[0].append((myceil(base*4, -2),))
+            tmp[0].append((myceil(base*2, -2), myceil(base, -2)))
+            point.append(tuple(tmp.pop(0)))
+            tmp.append([])
+            tmp[0].append((myceil(base*6, -2),))
+            tmp[0].append((myceil(base*2, -2),))
+            point.append(tuple(tmp.pop(0)))
+        elif self.han >= 5:
+            base = 200
+            if self.han < 6:
+                base *= 10
+            elif self.han < 8:
+                base *= 15
+            elif self.han < 11:
+                base *= 20
+            elif self.han < 13:
+                base *= 30
+            elif self.han >= 13:
+                base *= 40 * self.han // 13
+            point = (((base*4,), (base*2, base)), ((base*6,), (base*2,)))
+        return tuple(point)
+
 
 # アガリ形を分解して保持するクラス群
-class Kokushi:
+class Kokushi(Agari):
     def __init__(self, te):
         self.te = te
+        self.han = 13
 
     def get_yaku(self):
         return yaku.kokushi
@@ -216,9 +246,10 @@ class Kokushi:
         return sorted(self.te, key=lambda x: abs(x))
 
 
-class Churen:
+class Churen(Agari):
     def __init__(self, te):
         self.te = te
+        self.han = 13
 
     def get_yaku(self):
         return yaku.churen
@@ -227,7 +258,7 @@ class Churen:
         return sorted(self.te, key=lambda x: abs(x))
 
 
-class Chitoi(Yaku):
+class Chitoi(Agari):
     def __init__(self, tsumo, te):
         self.tsumo = tsumo
         self.te = te
@@ -273,7 +304,7 @@ class Chitoi(Yaku):
         return self.te
 
 
-class Mentsu(Yaku):
+class Mentsu(Agari):
     def __init__(self, tsumo, kaze, te, furo):
         self.tsumo = tsumo
         self.kaze = kaze
@@ -298,7 +329,7 @@ class Mentsu(Yaku):
             fu_ap[tuple(abs(x) for x in fu).count(abs(fu[0]))](fu)
         self.fu = self.get_fu()
         self.yaku = self.get_yaku()
-        self.__point = self.point()
+        self.point = self.cul_point()
 
     def __split_kan(self, kan):
         furo = False
@@ -446,37 +477,8 @@ class Mentsu(Yaku):
             self.han += 1
         return lst
 
-    def point(self):
-        if self.han < 5:
-            fu = myceil(self.fu, -1)
-            base = min(fu * (2 ** (self.han + 2)), 2000)
-            point = []
-            tmp = []
-            tmp.append([])
-            tmp[0].append((myceil(base*4, -2),))
-            tmp[0].append((myceil(base*2, -2), myceil(base, -2)))
-            point.append(tuple(tmp.pop(0)))
-            tmp.append([])
-            tmp[0].append((myceil(base*6, -2),))
-            tmp[0].append((myceil(base*2, -2),))
-            point.append(tuple(tmp.pop(0)))
-        elif self.han >= 5:
-            base = 200
-            if self.han < 6:
-                base *= 10
-            elif self.han < 8:
-                base *= 15
-            elif self.han < 11:
-                base *= 20
-            elif self.han < 13:
-                base *= 30
-            elif self.han >= 13:
-                base *= 40 * self.han // 13
-            point = (((base*4,), (base*2, base)), ((base*6,), (base*2,)))
-        return tuple(point)
-
     def get_point(self, oya, tsumo):
-        return self.__point
+        return self.point
 
     def get_te(self):
         return [self.janto] + self.ko + self.syu + self.kan
@@ -831,7 +833,7 @@ class Tehai:
                             print(f" {y}")
                         print()
                         print(f" {a1.get_fu()}符 {a1.han}翻")
-                        print(f" {a1.get_point(True, True)}\n")
+                        print(f" {a1.point}\n")
             return True
 
         if len(self.count_toi()) == 7:
@@ -847,7 +849,7 @@ class Tehai:
                 for y in self.agari[0].get_yaku():
                     print(f" {y}")
                 print(f" {self.agari[0].get_fu()} {self.agari[0].get_han()}")
-                print(f" {self.agari[0].get_point()}")
+                print(f" {self.agari[0].point}")
                 yaku = ""
                 han = 0
                 chanta = self.chanta([[x] for x in self.count_toi()])
