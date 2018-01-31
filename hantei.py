@@ -238,6 +238,7 @@ class Kokushi(Agari):
     def __init__(self, te):
         self.te = te
         self.han = 13
+        self.point = self.cul_point()
 
     def get_yaku(self):
         return yaku.kokushi
@@ -250,6 +251,7 @@ class Churen(Agari):
     def __init__(self, te):
         self.te = te
         self.han = 13
+        self.point = self.cul_point()
 
     def get_yaku(self):
         return yaku.churen
@@ -635,6 +637,7 @@ class Tehai:
             if flag:
                 print(*[dic[x] for x in self.agari[0].get_all()])
                 print(" " + self.agari[0].get_yaku())
+                print(f" {self.agari[0].point}")
             return True
 
         for i in range(1, 4):
@@ -648,6 +651,7 @@ class Tehai:
                 if flag:
                     print(*[dic[x] for x in self.agari[0].get_all()])
                     print(" " + self.agari[0].get_yaku())
+                    print(f" {self.agari[0].point}")
                 return True
 
         agari = self.analysis()
