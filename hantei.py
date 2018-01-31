@@ -205,7 +205,7 @@ class Agari:
 
     def cul_point(self):
         if self.han < 5:
-            fu = myceil(self.fu, -1)
+            fu = myceil(self.fu, -1) if self.fu != 25 else 25
             base = min(fu * (2 ** (self.han + 2)), 2000)
             point = []
             tmp = []
@@ -262,11 +262,12 @@ class Chitoi(Agari):
     def __init__(self, tsumo, te):
         self.tsumo = tsumo
         self.te = te
-        self.__fu = 25
+        self.fu = 25
         self.get_yaku()
+        self.point = self.cul_point()
 
     def get_fu(self):
-        return self.__fu
+        return self.fu
 
     def get_han(self):
         return self.han
@@ -615,175 +616,6 @@ class Tehai:
                 agari2.append(a1)
         return agari2
 
-# タンヤオ
-    def tannyao(self):
-        for hai in self.tehai + [x for y in self.furo for x in y]:
-            if hai//10 == 4 or hai % 10 == 1 or hai % 10 == 9:
-                return False
-        return True
-
-# 混一色 or 清一色 or 字一色
-    def iso(self):
-        iso = self.tehai + [x for y in self.furo for x in y]
-        iso = {x//10 for x in iso}
-        if len(iso) == 1 and 4 in iso:
-            return 3
-        elif len(iso) == 1:
-            return 2
-        elif len(iso) == 2 and 4 in iso:
-            return 1
-        return 0
-
-# 緑一色
-    def ryuiso(self):
-        ryuiso = [32, 33, 34, 36, 38, 46]
-        for hai in self.tehai:
-            if hai not in ryuiso:
-                return False
-        return True
-
-# 槓子
-    def kantsu(self, furo):
-        kantsu = 0
-        for f in furo:
-            if len(f) == 4:
-                kantsu += 1
-        if kantsu == 4:
-            return 2
-        elif kantsu == 3:
-            return 1
-        return 0
-
-# 役牌
-    def yakuhai(self, lst):
-        yakuhai = []
-        for p in lst[1:]:
-            if [abs(x) for x in p].count(p[0]) not in [3, 4]:
-                continue
-            if p[0] == ba:
-                yakuhai.append(p[0])
-            if p[0] == ji:
-                yakuhai.append(p[0])
-            if p[0] in range(45, 48) and p[0] not in yakuhai:
-                yakuhai.append(p[0])
-        return yakuhai
-
-# チャンタ or 純チャンタ
-    def chanta(self, lst):
-        chanta = 2   # [純チャン, チャンタ]
-        for p in lst:
-            if abs(p[0]) % 10 not in [1, 9] and abs(p[-1]) % 10 not in [1, 9]:
-                chanta = 1
-                if abs(p[0])//10 != 4 and abs(p[-1])//10 != 4:
-                    return 0
-        return chanta
-
-# 三色同順 or 三色同刻
-    def sansyoku(self, lst):
-        ones, tens = [], []
-        for p in lst[1:]:
-            if abs(p[0])//10 == 4:
-                continue
-            ones.append([i % 10 for i in p][:3])
-            tens.append(p[0]//10)
-        sames = [ones.count(x) for x in ones]
-        if not {3, 4} & set(sames):
-            return 0
-        if 1 in sames:
-            ones.pop(sames.index(1))
-            tens.pop(sames.index(1))
-        if sorted(set(tens)) == [1, 2, 3]:
-            if ones[0].count(ones[0][0]) == 1:
-                return 1
-            else:
-                return 2
-        return 0
-
-# 三暗刻 or 四暗刻
-    def anko(self, lst):
-        count = 0
-        for p in [list(map(abs, x)) for x in lst[1:]]:
-            if p.count(p[0]) in [3, 4]:
-                count += 1
-        if count == 3:
-            return True
-        elif count == 4:
-            return 2
-        return False
-
-# 一盃口 or 二盃口
-    def peko(self, lst):
-        if self.furo:
-            return False
-        peko = []
-        for p in [list(map(abs, x)) for x in lst[1:]]:
-            if p.count(p[0]) == 1:
-                peko.append(p)
-        sames = [peko.count(x) for x in peko]
-        if sames == [2, 2, 2, 2]:
-            return 2
-        for i in sames:
-            if i >= 2:
-                return True
-        return False
-
-# 一気通貫
-    def ittsu(self, lst):
-        lst = [abs(x) for inner in lst[1:] for x in inner]
-        for i in range(1, 4):
-            if set(range(i*10+1, i*10+10)) <= set(lst):
-                return True
-        return False
-
-# 対々和
-    def toitoi(self, lst):
-        for l in [list(map(abs, x)) for x in lst[1:]]:
-            if l.count(l[0]) != 3:
-                return False
-        return True
-
-# 小三元 or 大三元
-    def sangen(self, lst):
-        count = 0
-        lst = [abs(x) for inner in lst for x in inner]
-        for l in range(45, 48):
-            if l in lst:
-                count += 1
-                continue
-        if count != 3:
-            return False
-        if lst[0] in range(45, 48):
-            return True
-        return 2
-
-# 小四喜 or 大四喜
-    def sushi(self, lst):
-        count = 0
-        lst = [abs(x) for inner in lst for x in inner]
-        for l in range(41, 45):
-            if l in lst:
-                count += 1
-                continue
-        if count != 4:
-            return False
-        if lst[0] in range(41, 45):
-            return True
-        return 2
-
-# 平和
-    def pinfu(self, lst):
-        if self.furo or lst[0][0] in [ba, ji] + list(range(45, 48)):
-            return False
-        pinfu = False
-        for p0 in lst[1:]:
-            if [abs(x) for x in p0].count(abs(p0[0])) != 1:
-                return False
-            if p0[0] * p0[-1] < 0:
-                if [x % 10 for x in p0 if x > 0] in [[1, 2], [8, 9]]:
-                    return False
-                pinfu = True
-        return pinfu
-
 
 # あたり牌を検索
     def atari(self):
@@ -850,26 +682,6 @@ class Tehai:
                     print(f" {y}")
                 print(f" {self.agari[0].get_fu()} {self.agari[0].get_han()}")
                 print(f" {self.agari[0].point}")
-                yaku = ""
-                han = 0
-                chanta = self.chanta([[x] for x in self.count_toi()])
-                iso = self.iso()
-                if iso == 3:
-                    print(" 役満 字一色")
-                    return True
-                yaku = yaku + " 2翻 七対子\n"
-                han += 2
-                if chanta == 1:
-                    yaku += " 2翻 混老頭\n"
-                    han += 2
-                if self.tannyao():
-                    yaku += " 1翻 たんやお\n"
-                    han += 1
-                if iso == 2:
-                    yaku += " 6翻 清一色\n"
-                    han += 6
-                print(yaku)
-                print(f" 25符 {han}翻\n")
             return True
         return False
 
