@@ -24,6 +24,8 @@ dic.update(zip([-x for x in lst],
 ba = 41
 ji = 41
 
+oya = True
+tsumo = True
 
 def rndlst(lst):
     random.shuffle(lst)
@@ -59,6 +61,10 @@ def myceil(num, n=0):
 
 
 class Agari:
+    def __init__(self, oya, tsumo):
+        self.oya = oya
+        self.tsumo = tsumo
+
     def tannyao(self):
         for hai in (abs(x) for y in self.get_all() for x in y):
             if hai in yaochu:
@@ -203,7 +209,7 @@ class Agari:
                 return False
         return True
 
-    def cul_point(self):
+    def cul_point(self, oya, tsumo):
         if self.han < 5:
             fu = myceil(self.fu, -1) if self.fu != 25 else 25
             base = min(fu * (2 ** (self.han + 2)), 2000)
@@ -230,15 +236,24 @@ class Agari:
             elif self.han >= 13:
                 base *= 40 * self.han // 13
             point = (((base*4,), (base*2, base)), ((base*6,), (base*2,)))
+        if oya and tsumo:
+            return (myceil(base*2, -2),)
+        elif oya and not tsumo:
+            return (myceil(base*6, -2),)
+        elif not oya and tsumo:
+            return (myceil(base*2, -2), myceil(base, -2))
+        elif not oya and not tsumo:
+            return (myceil(base*4, -2),)
         return tuple(point)
 
 
 # アガリ形を分解して保持するクラス群
 class Kokushi(Agari):
-    def __init__(self, te):
+    def __init__(self, te, oya, tsumo):
+        super().__init__(oya, tsumo)
         self.te = te
         self.han = 13
-        self.point = self.cul_point()
+        self.point = self.cul_point(self.oya, self.tsumo)
 
     def get_yaku(self):
         return yaku.kokushi
@@ -248,10 +263,11 @@ class Kokushi(Agari):
 
 
 class Churen(Agari):
-    def __init__(self, te):
+    def __init__(self, te, oya, tsumo):
+        super().__init__(oya, tsumo)
         self.te = te
         self.han = 13
-        self.point = self.cul_point()
+        self.point = self.cul_point(self.oya, self.tsumo)
 
     def get_yaku(self):
         return yaku.churen
@@ -261,12 +277,12 @@ class Churen(Agari):
 
 
 class Chitoi(Agari):
-    def __init__(self, tsumo, te):
-        self.tsumo = tsumo
+    def __init__(self, te, oya, tsumo):
+        super().__init__(oya, tsumo)
         self.te = te
         self.fu = 25
         self.get_yaku()
-        self.point = self.cul_point()
+        self.point = self.cul_point(self.oya, self.tsumo)
 
     def get_fu(self):
         return self.fu
@@ -308,8 +324,8 @@ class Chitoi(Agari):
 
 
 class Mentsu(Agari):
-    def __init__(self, tsumo, kaze, te, furo):
-        self.tsumo = tsumo
+    def __init__(self, kaze, te, furo, oya, tsumo):
+        super().__init__(oya, tsumo)
         self.kaze = kaze
         self.janto = te[0]
         self.syu = []
@@ -332,7 +348,7 @@ class Mentsu(Agari):
             fu_ap[tuple(abs(x) for x in fu).count(abs(fu[0]))](fu)
         self.fu = self.get_fu()
         self.yaku = self.get_yaku()
-        self.point = self.cul_point()
+        self.point = self.cul_point(self.oya, self.tsumo)
 
     def __split_kan(self, kan):
         furo = False
@@ -572,7 +588,7 @@ class Tehai:
                         alt = tmp[i].copy()
                         alt[alt.index(self.tsumo)] *= -1
                         agari.append(Mentsu(
-                            True, ji, tmp[:i]+[alt]+tmp[i+1:], self.furo
+                            ji, tmp[:i]+[alt]+tmp[i+1:], self.furo, oya, tsumo
                         ))
 #                 agari.append([[t2]*2]+ko+syu)
 # 刻子優先、順子は逆順
@@ -596,7 +612,7 @@ class Tehai:
                         alt = tmp[i].copy()
                         alt[alt.index(self.tsumo)] *= -1
                         agari.append(Mentsu(
-                            True, ji, tmp[:i]+[alt]+tmp[i+1:], self.furo
+                            ji, tmp[:i]+[alt]+tmp[i+1:], self.furo, oya, tsumo
                         ))
 #                 agari.append([[t2]*2]+ko+syu)
 # 順子優先、順子は逆順
@@ -633,7 +649,7 @@ class Tehai:
         if set(self.tehai) == set(yaochu):
             tmp = self.tehai.copy()
             tmp[tmp.index(self.tsumo)] *= -1
-            self.agari = [Kokushi(tmp)]
+            self.agari = [Kokushi(tmp, oya, tsumo)]
             if flag:
                 print(*[dic[x] for x in self.agari[0].get_all()])
                 print(" " + self.agari[0].get_yaku())
@@ -647,7 +663,7 @@ class Tehai:
                     and self.tehai.count(i*10+9) >= 3:
                 tmp = self.tehai.copy()
                 tmp[tmp.index(self.tsumo)] *= -1
-                self.agari = [Churen(tmp)]
+                self.agari = [Churen(tmp, oya, tsumo)]
                 if flag:
                     print(*[dic[x] for x in self.agari[0].get_all()])
                     print(" " + self.agari[0].get_yaku())
@@ -677,7 +693,7 @@ class Tehai:
             for t in tmp:
                 if t[0] == self.tsumo:
                     t[0] *= -1
-            self.agari = [Chitoi(True, tmp)]
+            self.agari = [Chitoi(tmp, oya, tsumo)]
             if flag:
                 for p in self.agari[0].get_all():
                     print("".join([dic[x] for x in p]), end=" ")
@@ -744,6 +760,7 @@ if __name__ == '__main__':
             print("turn =", turn)
             print()
             print("場風:", dic[ba], "自風:", dic[ji])
+            print(f"oya:{oya}, tsumo:{tsumo}")
             print()
             print(*[f"{x:02}" for x in range(14)])
             print(*tehai.conv())
@@ -805,6 +822,10 @@ if __name__ == '__main__':
             if usrinput == 'debug':
                 mode = 2
                 continue
+            if usrinput == 'oya':
+                oya = False if oya else True
+            if usrinput == 'tsumo':
+                tsumo = False if tsumo else True
 # 'furo' でツモ牌で鳴く
             if usrinput == 'furo' and mode != 1:
                 furable = []
