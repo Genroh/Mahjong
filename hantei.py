@@ -488,7 +488,7 @@ class Mentsu(Agari):
         if iso == 1:
             lst.append(yaku.honniso(self.get_furo()))
             self.han += 2 if self.get_furo() else 3
-        if not self.get_furo():
+        if self.tsumo and not self.get_furo():
             lst.append(yaku.tsumo)
             self.han += 1
         for y in self.yakuhai():
