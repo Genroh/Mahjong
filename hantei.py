@@ -713,7 +713,7 @@ class Tehai:
                 print()
                 for y in self.agari[0].get_yaku():
                     print(f" {y}")
-                print(f" {self.agari[0].fu} {self.agari[0].get_han()}")
+                print(f" {self.agari[0].fu}符 {self.agari[0].han}翻")
                 print(f" {self.agari[0].point}")
             return True
         return False
