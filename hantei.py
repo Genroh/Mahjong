@@ -379,11 +379,17 @@ class Mentsu(Agari):
     def cul_fu(self):
         fu = 20
         if len(self.syu + self.fu_syu) == 4:
-            if not self.get_furo() and self.tsumo:
-                fu = 20
-            else:
-                fu = 30
-            return fu
+            flag = True
+            for s in self.syu + self.fu_syu:
+                if s[1] < 0:
+                    flag = False
+                    break
+            if flag:
+                if not self.get_furo() and self.tsumo:
+                    fu = 20
+                else:
+                    fu = 30
+                return fu
         if abs(self.janto[0]) in (ba, self.kaze, tuple(range(45, 48))):
             fu += (
                 4 if abs(self.janto[0]) == ba and ba == self.kaze else 2
