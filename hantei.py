@@ -346,7 +346,7 @@ class Mentsu(Agari):
         }
         for fu in furo:
             fu_ap[tuple(abs(x) for x in fu).count(abs(fu[0]))](fu)
-        self.fu = self.get_fu()
+        self.fu = self.cul_fu()
         self.yaku = self.get_yaku()
         self.point = self.cul_point(self.oya, self.tsumo)
 
@@ -376,40 +376,37 @@ class Mentsu(Agari):
                 return False
         return True
 
-    def get_fu(self):
-        try:
-            return self.__fu
-        except Exception as e:
-            self.__fu = 20
+    def cul_fu(self):
+        fu = 20
         if len(self.syu + self.fu_syu) == 4:
             if not self.get_furo() and self.tsumo:
-                self.__fu = 20
+                fu = 20
             else:
-                self.__fu = 30
-            return self.__fu
+                fu = 30
+            return fu
         if abs(self.janto[0]) in (ba, self.kaze, tuple(range(45, 48))):
-            self.__fu += (
+            fu += (
                 4 if abs(self.janto[0]) == ba and ba == self.kaze else 2
             )
         for po in self.fu_ko:
-            self.__fu += 4 if po[0] in yaochu else 2
+            fu += 4 if po[0] in yaochu else 2
         for po in self.ko:
-            self.__fu += 8 if po[0] in yaochu else 4
+            fu += 8 if po[0] in yaochu else 4
         for po in self.fu_kan:
-            self.__fu += 16 if po[0] in yaochu else 8
+            fu += 16 if po[0] in yaochu else 8
         for po in self.kan:
-            self.__fu += 32 if po[0] in yaochu else 16
+            fu += 32 if po[0] in yaochu else 16
         for to in self.janto:
             if to < 0:
-                self.__fu += 2
+                fu += 2
         for s in self.syu:
             if s[1] < 0 or [x % 10 for x in s if x > 0] in ([1, 2], [8, 9]):
-                self.__fu += 2
+                fu += 2
         if self.tsumo:
-            self.__fu += 2
+            fu += 2
         elif not self.get_furo():
-            self.__fu += 10
-        return self.__fu
+            fu += 10
+        return fu
 
     def get_yaku(self):
         chanta = self.chanta()
@@ -694,7 +691,7 @@ class Tehai:
                         for y in a1.get_yaku():
                             print(f" {y}")
                         print()
-                        print(f" {a1.get_fu()}符 {a1.han}翻")
+                        print(f" {a1.fu}符 {a1.han}翻")
                         print(f" {a1.point}\n")
             return True
 
@@ -710,7 +707,7 @@ class Tehai:
                 print()
                 for y in self.agari[0].get_yaku():
                     print(f" {y}")
-                print(f" {self.agari[0].get_fu()} {self.agari[0].get_han()}")
+                print(f" {self.agari[0].fu} {self.agari[0].get_han()}")
                 print(f" {self.agari[0].point}")
             return True
         return False
@@ -769,8 +766,8 @@ if __name__ == '__main__':
             print("mode =", modedic[mode])
             print("turn =", turn)
             print()
-            print("場風:", dic[ba], "自風:", dic[ji])
-            print(f"oya:{oya}, tsumo:{tsumo}")
+            print(f"場風:{dic[ba]} 自風:{dic[ji]}")
+            print(f"親:{oya}, ツモ:{tsumo}")
             print()
             print(*[f"{x:02}" for x in range(14)])
             print(*tehai.conv())
