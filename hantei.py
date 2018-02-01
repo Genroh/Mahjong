@@ -241,7 +241,7 @@ class Agari:
         elif oya and not tsumo:
             return (myceil(base*6, -2),)
         elif not oya and tsumo:
-            return (myceil(base*2, -2), myceil(base, -2))
+            return (myceil(base, -2), myceil(base*2, -2))
         elif not oya and not tsumo:
             return (myceil(base*4, -2),)
         return tuple(point)
@@ -381,6 +381,12 @@ class Mentsu(Agari):
             return self.__fu
         except Exception as e:
             self.__fu = 20
+        if len(self.syu + self.fu_syu) == 4:
+            if not self.get_furo() and self.tsumo:
+                self.__fu = 20
+            else:
+                self.__fu = 30
+            return self.__fu
         if abs(self.janto[0]) in (ba, self.kaze, tuple(range(45, 48))):
             self.__fu += (
                 4 if abs(self.janto[0]) == ba and ba == self.kaze else 2
@@ -399,6 +405,10 @@ class Mentsu(Agari):
         for s in self.syu:
             if s[1] < 0 or [x % 10 for x in s if x > 0] in ([1, 2], [8, 9]):
                 self.__fu += 2
+        if self.tsumo:
+            self.__fu += 2
+        elif not self.get_furo():
+            self.__fu += 10
         return self.__fu
 
     def get_yaku(self):
