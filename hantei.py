@@ -661,7 +661,7 @@ class Tehai:
     def hantei(self, flag):
         if set(self.tehai) == set(yaochu):
             tmp = self.tehai.copy()
-            tmp[tmp.index(self.tsumo)] *= -1
+            tmp[::-1][tmp[::-1].index(self.tsumo)] *= -1
             self.agari = [Kokushi(tmp, oya, tsumo)]
             if flag:
                 print(*[dic[x] for x in self.agari[0].get_all()])
@@ -675,7 +675,7 @@ class Tehai:
             if self.tehai.count(i*10+1) >= 3 \
                     and self.tehai.count(i*10+9) >= 3:
                 tmp = self.tehai.copy()
-                tmp[tmp.index(self.tsumo)] *= -1
+                tmp[::-1][tmp[::-1].index(self.tsumo)] *= -1
                 self.agari = [Churen(tmp, oya, tsumo)]
                 if flag:
                     print(*[dic[x] for x in self.agari[0].get_all()])
