@@ -3,7 +3,6 @@
 
 # Written By python 3.6.1
 
-import pdb
 import os
 import sys
 import random
@@ -270,7 +269,6 @@ class Churen(Agari):
         self.te = te
         perfect = (1,)*3 + tuple(range(2, 9)) + (9,)*3
         check = tuple(t % 10 for t in te if t > 0)
-        pdb.set_trace()
         self.double = True if check == perfect else False
         self.han = 26 if self.double else 13
         self.point = self.cul_point(self.oya, self.tsumo)
@@ -667,7 +665,7 @@ class Tehai:
     def hantei(self, flag):
         if set(self.tehai) == set(yaochu):
             tmp = self.tehai.copy()
-            tmp[::-1][tmp[::-1].index(self.tsumo)] *= -1
+            tmp[len(tmp)-tmp[::-1].index(self.tsumo)-1] *= -1
             self.agari = [Kokushi(tmp, oya, tsumo)]
             if flag:
                 print(*[dic[x] for x in self.agari[0].get_all()])
@@ -681,7 +679,7 @@ class Tehai:
             if self.tehai.count(i*10+1) >= 3 \
                     and self.tehai.count(i*10+9) >= 3:
                 tmp = self.tehai.copy()
-                tmp[::-1][tmp[::-1].index(self.tsumo)] *= -1
+                tmp[len(tmp)-tmp[::-1].index(self.tsumo)-1] *= -1
                 self.agari = [Churen(tmp, oya, tsumo)]
                 if flag:
                     print(*[dic[x] for x in self.agari[0].get_all()])
