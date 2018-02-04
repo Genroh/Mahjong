@@ -3,6 +3,7 @@
 
 # Written By python 3.6.1
 
+import pdb
 import os
 import sys
 import random
@@ -252,11 +253,12 @@ class Kokushi(Agari):
     def __init__(self, te, oya, tsumo):
         super().__init__(oya, tsumo)
         self.te = te
-        self.han = 13
+        self.double = False if len(set(t for t in te if t > 0)) != 13 else True
+        self.han = 26 if self.double else 13
         self.point = self.cul_point(self.oya, self.tsumo)
 
     def get_yaku(self):
-        return yaku.kokushi
+        return yaku.kokushi_d if self.double else yaku.kokushi
 
     def get_all(self):
         return sorted(self.te, key=lambda x: abs(x))
@@ -266,11 +268,15 @@ class Churen(Agari):
     def __init__(self, te, oya, tsumo):
         super().__init__(oya, tsumo)
         self.te = te
-        self.han = 13
+        perfect = (1,)*3 + tuple(range(2, 9)) + (9,)*3
+        check = tuple(t % 10 for t in te if t > 0)
+        pdb.set_trace()
+        self.double = True if check == perfect else False
+        self.han = 26 if self.double else 13
         self.point = self.cul_point(self.oya, self.tsumo)
 
     def get_yaku(self):
-        return yaku.churen
+        return yaku.churen_d if self.double else yaku.churen
 
     def get_all(self):
         return sorted(self.te, key=lambda x: abs(x))
