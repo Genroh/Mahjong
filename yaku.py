@@ -4,7 +4,9 @@
 # Written By python 3.6.1
 
 kokushi = "役満 国士無双"
+kokushi_d = "ダブル役満 国士無双"
 churen = "役満 九蓮宝燈"
+churen_d = "ダブル役満 九蓮宝燈"
 chinroto = "役満 清老頭"
 honroto = "2翻 混老頭"
 daisangen = "役満 大三元"
