@@ -384,6 +384,10 @@ class Mentsu(Agari):
         fu = 20
         if len(self.syu + self.fu_syu) == 4:
             flag = True
+            for to in self.janto:
+                if to < 0:
+                    fu += 2
+                    flag = False
             for s in self.syu + self.fu_syu:
                 if s[1] < 0:
                     flag = False
@@ -406,9 +410,6 @@ class Mentsu(Agari):
             fu += 16 if po[0] in yaochu else 8
         for po in self.kan:
             fu += 32 if po[0] in yaochu else 16
-        for to in self.janto:
-            if to < 0:
-                fu += 2
         for s in self.syu:
             if s[1] < 0 or [x % 10 for x in s if x > 0] in ([1, 2], [8, 9]):
                 fu += 2
