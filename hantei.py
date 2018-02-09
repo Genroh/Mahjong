@@ -295,33 +295,33 @@ class Chitoi(Agari):
         return self.han
 
     def get_yaku(self):
-        yaku = []
+        lst = []
         self.han = 0
         iso = self.iso()
         if iso == 3:
-            yaku.append("役満 字一色")
+            lst.append(yaku.tsuiso)
             self.han += 13
-            return yaku
-        yaku.append("2翻 七対子")
+            return lst
+        lst.append(yaku.chitoi)
         self.han += 2
         chanta = self.chanta()
         tannyao = self.tannyao()
         if iso == 2:
-            yaku.append("6翻 清一色")
+            lst.append(yaku.chiniso(False))
             self.han += 6
         elif iso == 1:
-            yaku.append("3翻 混一色")
+            lst.append(yaku.honniso(False))
             self.han += 3
         if chanta:
-            yaku.append("2翻 混老頭")
+            lst.append(yaku.honroto)
             self.han += 2
         if tannyao:
-            yaku.append("1翻 たんやお")
+            lst.append(yaku.tannyao)
             self.han += 1
         if self.tsumo:
-            yaku.append("1翻 門前清自摸和")
+            lst.append(yaku.tsumo)
             self.han += 1
-        return yaku
+        return lst
 
     def get_all(self):
         return self.te
