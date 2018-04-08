@@ -5,6 +5,7 @@
 
 import os
 import sys
+import random
 import auto
 import hantei
 
@@ -14,7 +15,16 @@ class Player:
         self.name = name
         self.point = 25000
         self.tehai = []
+        self.furo = []
         self.ho = []
+
+
+def used_hai(players):
+    hai = []
+    for player in players[1:]:
+        hai.extend(player.tehai)
+        hai.extend(player.ho)
+    return hai
 
 
 def scene_game(players):
@@ -25,6 +35,12 @@ def scene_game(players):
 
 
 if __name__ == '__main__':
+
+    if sys.platform == 'win32':
+        os.system('cls')
+    else:
+        os.system('clear')
+
     lst = hantei.lst * 4
 
     print("Input your name.")
@@ -34,20 +50,49 @@ if __name__ == '__main__':
     players.append(Player("CPU2"))
     players.append(Player("CPU3"))
 
-    if sys.platform == 'win32':
-        os.system('cls')
-    else:
-        os.system('clear')
+    try:
+        yama = hantei.rndlst(lst)
+        for i in range(4):
+            players[i].tehai.extend(sorted(yama[0:13]))
+            del yama[0:13]
+        choose = random.choice(yama)
+        yama.remove(choose)
+        players[0].tehai.append(choose)
+        players[0].tehai.sort()
+        while True:
+            if sys.platform == 'win32':
+                os.system('cls')
+            else:
+                os.system('clear')
 
-    for i in range(14):
-        print(f"{i:02}", end=" ")
-    print('\n')
-    yama = hantei.rndlst(lst)
-    for i in range(4):
-        players[i].tehai.extend(sorted(yama[0:13]))
-        del yama[0:13]
-        print(*[hantei.dic[x] for x in players[i].tehai])
+            for i in range(14):
+                print(f"{i:02}", end=" ")
+            print('\n')
+            for i in range(4):
+                print(*[hantei.dic[x] for x in players[i].tehai])
+                print()
+            print()
+
+            scene_game(players)
+            print("\n > ", end="")
+            usrinput = input()
+# 'q' または ':q' で終了
+            if usrinput == 'q' or usrinput == ':q':
+                break
+            if usrinput.isdigit():
+                pop = players[0].tehai.pop(int(usrinput))
+                if not pop:
+                    continue
+                players[0].ho.append(pop)
+                players[0].tehai.sort()
+                choose = random.choice(yama)
+                yama.remove(choose)
+                players[0].tehai.append(choose)
+                for AI in players[1:]:
+                    choose = random.choice(yama)
+                    AI.ho.append(choose)
+
+# Ctrl-C で終了
+    except KeyboardInterrupt:
         print()
-    print()
-
-    scene_game(players)
+    print("See you agein!")

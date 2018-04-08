@@ -27,6 +27,7 @@ ji = 41
 oya = True
 tsumo = True
 
+
 def rndlst(lst):
     random.shuffle(lst)
     return lst
@@ -36,7 +37,9 @@ def rndtsumo(tehai, ho):
     tsumo = lst*4
     for te in tehai.tehai+[x for y in tehai.furo for x in y]+ho:
         tsumo.remove(te)
-    tehai.set(random.choice(tsumo))
+    choosed = random.choice(tsumo)
+    tehai.set(choosed)
+    return choosed
 
 
 def rmlst(lst, rem, num):
