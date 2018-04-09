@@ -92,6 +92,11 @@ if __name__ == '__main__':
                     choose = random.choice(yama)
                     yama.remove(choose)
                     AI.ho.append(choose)
+                    players[0].tehai.set(choose)
+                    if players[0].tehai.hantei(True):
+                        print("correct")
+                        exit()
+
             else:
                 continue
             if not yama:
@@ -102,6 +107,7 @@ if __name__ == '__main__':
             players[0].tehai.set(choose)
             if players[0].tehai.hantei(True):
                 print("correct")
+                exit()
 
 
 # Ctrl-C で終了
