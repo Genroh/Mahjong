@@ -53,12 +53,11 @@ if __name__ == '__main__':
     try:
         yama = hantei.rndlst(lst)
         for i in range(4):
-            players[i].tehai.extend(sorted(yama[0:13]))
+            players[i].tehai = hantei.Tehai(sorted(yama[0:13]))
             del yama[0:13]
         choose = random.choice(yama)
         yama.remove(choose)
-        players[0].tehai.append(choose)
-        players[0].tehai.sort()
+        players[0].tehai.set(choose)
         while True:
             if sys.platform == 'win32':
                 os.system('cls')
@@ -70,7 +69,8 @@ if __name__ == '__main__':
                 print(f"{i:02}", end=" ")
             print('\n')
             for i in range(4):
-                print(*[hantei.dic[x] for x in players[i].tehai])
+#                 print(*[hantei.dic[x] for x in players[i].tehai])
+                print(*players[i].tehai.conv())
                 print()
             print()
 
@@ -85,14 +85,24 @@ if __name__ == '__main__':
                 if not pop:
                     continue
                 players[0].ho.append(pop)
-                players[0].tehai.sort()
-                choose = random.choice(yama)
-                yama.remove(choose)
-                players[0].tehai.append(choose)
                 for AI in players[1:]:
+                    if not yama:
+                        print("山切れ")
+                        break
                     choose = random.choice(yama)
                     yama.remove(choose)
                     AI.ho.append(choose)
+            else:
+                continue
+            if not yama:
+                print("山切れ")
+                break
+            choose = random.choice(yama)
+            yama.remove(choose)
+            players[0].tehai.set(choose)
+            if players[0].tehai.hantei(True):
+                print("correct")
+
 
 # Ctrl-C で終了
     except KeyboardInterrupt:
