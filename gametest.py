@@ -65,6 +65,7 @@ if __name__ == '__main__':
             else:
                 os.system('clear')
 
+            print(f"山残り : {len(yama)}")
             for i in range(14):
                 print(f"{i:02}", end=" ")
             print('\n')
@@ -90,6 +91,7 @@ if __name__ == '__main__':
                 players[0].tehai.append(choose)
                 for AI in players[1:]:
                     choose = random.choice(yama)
+                    yama.remove(choose)
                     AI.ho.append(choose)
 
 # Ctrl-C で終了
