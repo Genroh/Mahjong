@@ -96,6 +96,7 @@ if __name__ == '__main__':
                     if players[0].tehai.hantei(True):
                         print("correct")
                         exit()
+                    players[0].tehai.pop(13)
 
             else:
                 continue
