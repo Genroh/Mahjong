@@ -104,8 +104,8 @@ if __name__ == '__main__':
                     yama.remove(choose)
                     AI.ho.append(choose)
                     players[0].tehai.set(choose)
-                    if players[0].tehai.hantei(True):
-                        print("correct")
+                    if players[0].tehai.hantei(True, False):
+                        print("correct ロン")
                         exit()
                     players[0].tehai.pop(13)
 
@@ -117,8 +117,8 @@ if __name__ == '__main__':
             choose = random.choice(yama)
             yama.remove(choose)
             players[0].tehai.set(choose)
-            if players[0].tehai.hantei(True):
-                print("correct")
+            if players[0].tehai.hantei(True, True):
+                print("correct 自摸和")
                 exit()
 
 

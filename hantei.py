@@ -25,7 +25,7 @@ ba = 41
 ji = 41
 
 oya = True
-tsumo = True
+isTsumo = True
 
 
 def rndlst(lst):
@@ -239,13 +239,13 @@ class Agari:
             elif self.han >= 13:
                 base *= 40 * self.han // 13
             point = (((base*4,), (base*2, base)), ((base*6,), (base*2,)))
-        if oya and tsumo:
+        if oya and isTsumo:
             return (myceil(base*2, -2),)
-        elif oya and not tsumo:
+        elif oya and not isTsumo:
             return (myceil(base*6, -2),)
-        elif not oya and tsumo:
+        elif not oya and isTsumo:
             return (myceil(base, -2), myceil(base*2, -2))
-        elif not oya and not tsumo:
+        elif not oya and not isTsumo:
             return (myceil(base*4, -2),)
         return tuple(point)
 
@@ -609,7 +609,7 @@ class Tehai:
                         alt = tmp[i].copy()
                         alt[alt.index(self.tsumo)] *= -1
                         agari.append(Mentsu(
-                            ji, tmp[:i]+[alt]+tmp[i+1:], self.furo, oya, tsumo
+                            ji, tmp[:i]+[alt]+tmp[i+1:], self.furo, oya, True
                         ))
 #                 agari.append([[t2]*2]+ko+syu)
 # 刻子優先、順子は逆順
@@ -633,7 +633,7 @@ class Tehai:
                         alt = tmp[i].copy()
                         alt[alt.index(self.tsumo)] *= -1
                         agari.append(Mentsu(
-                            ji, tmp[:i]+[alt]+tmp[i+1:], self.furo, oya, tsumo
+                            ji, tmp[:i]+[alt]+tmp[i+1:], self.furo, oya, True
                         ))
 #                 agari.append([[t2]*2]+ko+syu)
 # 順子優先、順子は逆順
@@ -661,12 +661,12 @@ class Tehai:
         atari = []
         for hai in lst:
             tehai = Tehai(sorted(self.tehai+[hai]), self.furo)
-            if tehai.hantei(False):
+            if tehai.hantei(False, True):
                 atari.append(hai)
         return atari
 
 # アガリ状態かどうか判定する
-    def hantei(self, flag):
+    def hantei(self, flag, tsumo):
         if set(self.tehai) == set(yaochu):
             tmp = self.tehai.copy()
             tmp[len(tmp)-tmp[::-1].index(self.tsumo)-1] *= -1
@@ -781,7 +781,7 @@ if __name__ == '__main__':
             print("turn =", turn)
             print()
             print(f"場風:{dic[ba]} 自風:{dic[ji]}")
-            print(f"親:{oya}, ツモ:{tsumo}")
+            print(f"親:{oya}, ツモ:{isTsumo}")
             print()
             print(*[f"{x:02}" for x in range(14)])
             print(*tehai.conv())
@@ -796,7 +796,7 @@ if __name__ == '__main__':
                 atari = tehai.atari()
                 print("当たり牌:", *[dic[x] for x in atari])
             if mode in [2, 3]:
-                if tehai.hantei(True):
+                if tehai.hantei(True, isTsumo):
                     furi = Tehai(tehai.tehai[:-1], tehai.furo)
                     for f in furi.atari():
                         if f in ho:
@@ -846,7 +846,7 @@ if __name__ == '__main__':
             if usrinput == 'oya':
                 oya = False if oya else True
             if usrinput == 'tsumo':
-                tsumo = False if tsumo else True
+                isTsumo = False if isTsumo else True
 # 'furo' でツモ牌で鳴く
             if usrinput == 'furo' and mode != 1:
                 furable = []
