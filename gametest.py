@@ -10,6 +10,15 @@ import auto
 import hantei
 
 
+class Game:
+    def __init__(self):
+        self.turn = -1
+        self.oya = -1
+        self.ba = -1
+        self.kyoku = 0
+        self.honba = 0
+
+
 class Player:
     def __init__(self, name):
         self.name = name
@@ -42,10 +51,12 @@ if __name__ == '__main__':
         os.system('clear')
 
     lst = hantei.lst * 4
+    game = Game()
 
     print("Input your name.")
+    player_name = input()
     players = []
-    players.append(Player(input()))
+    players.append(Player(player_name))
     players.append(Player("CPU1"))
     players.append(Player("CPU2"))
     players.append(Player("CPU3"))
