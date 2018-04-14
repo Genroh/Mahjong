@@ -79,7 +79,7 @@ if __name__ == '__main__':
             for i in range(14):
                 print(f"{i:02}", end=" ")
             print('\n')
-            for i in range(4):
+            for i in range(1):
 #                 print(*[hantei.dic[x] for x in players[i].tehai])
                 print(*players[i].tehai.conv())
                 print()
