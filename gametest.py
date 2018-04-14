@@ -112,6 +112,14 @@ if __name__ == '__main__':
                     if not pop:
                         continue
                     players[0].ho.append(pop)
+                    for player in players[1:]:
+                        player.tehai.set(pop)
+                        if player.tehai.hantei(False, False):
+                            scene_game(players)
+                            player.tehai.hantei(True, True)
+                            print("お前が放銃！")
+                            exit()
+                        player.tehai.pop(13)
             else:
                 pop = players[game.turn].tehai.pop(13)
                 players[game.turn].ho.append(pop)
