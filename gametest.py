@@ -99,6 +99,9 @@ if __name__ == '__main__':
 
             scene_game(players)
             if game.turn == 0:
+                if game.oya == 0:
+                    hantei.oya = True
+                    hantei.isTsumo = True
                 if players[0].tehai.hantei(True, True):
                     print("自摸和！")
                     exit()
@@ -116,6 +119,11 @@ if __name__ == '__main__':
                         player.tehai.set(pop)
                         if player.tehai.hantei(False, False):
                             scene_game(players)
+                            if players[game.oya] == player:
+                                hantei.oya = True
+                            else:
+                                hantei.oya = False
+                            hantei.isTsumo = False
                             player.tehai.hantei(True, True)
                             print("お前が放銃！")
                             exit()
@@ -127,6 +135,8 @@ if __name__ == '__main__':
                 players[0].tehai.set(pop)
                 if players[0].tehai.hantei(False, False):
                     scene_game(players)
+                    hantei.oya = True if game.oya == 0 else False
+                    hantei.isTsumo = False
                     players[0].tehai.hantei(True, False)
                     print("放銃！")
                     exit()
