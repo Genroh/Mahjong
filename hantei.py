@@ -585,6 +585,21 @@ class Tehai:
         cnt = [k for k, v in dic.items() if v >= 2]
         return cnt
 
+# 副露できるならそれを返す
+    def furable(self, hai):
+        furable = []
+        if set((hai-2, hai-1)) <= set(self.tehai):
+            furable.append([hai-2, hai-1])
+        if set((hai-1, hai+1)) <= set(self.tehai):
+            furable.append([hai-1, hai+1])
+        if set((hai+1, hai+2)) <= set(self.tehai):
+            furable.append([hai+1, hai+2])
+        if self.tehai.count(hai) >= 2:
+            furable.append([hai]*2)
+        if self.tehai.count(hai) is 3:
+            furable.append([hai]*3)
+        return furable
+
 # 一般的なアガリ形かどうかを解析する
     def analysis(self):
         toi = self.count_toi()
