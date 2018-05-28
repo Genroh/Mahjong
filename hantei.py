@@ -23,6 +23,7 @@ dic.update(zip([-x for x in lst],
 
 ba = 41
 ji = 41
+sangen = (44, 45, 46)
 
 oya = True
 isTsumo = True
@@ -203,7 +204,7 @@ class Agari:
 
     def pinfu(self):
         if len(self.syu) != 4 \
-                or abs(self.janto[0]) in (ba, self.kaze) \
+                or abs(self.janto[0]) in (ba, self.kaze) + sangen \
                 or len(set(self.janto)) != 1:
             return False
         for p0 in self.syu:
