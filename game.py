@@ -10,23 +10,84 @@ import auto
 import hantei
 
 
+# ゲーム本体クラス
+# 基本的にこいつに色々聞いていくことでゲームを進行したい
 class Game:
     def __init__(self):
+        self.mode = -1
         self.turn = -1
         self.oya = -1
         self.ba = -1
         self.kyoku = 0
         self.honba = -1
 
-    def init(self):
-        self.turn = random.randint(0, 3)
+    def init(self, *players):
+        self.mode = 1
+        self.yama = hantei.rndlst(hantei.lst * 4)
+        self.turn = random.randint(0, 3) # random.randintは "a以上b以下の数値"
         self.oya = self.turn
         self.ba = 0
         self.kyoku = 1
         self.honba = 0
+        self.players = players
+        for pl in players:
+            pl.tehai = hantei.Tehai(sorted(self.yama[:13]))
+            del self.yama[:13]
 
+    # 誰が何を送ったかを受け取って、対応した正しい処理を行う
+    def post(self, plid, order):
+        if plid is not self.turn:
+            return -1
+        if self.mode is 1 and order in range(14):
+            pop = self.players[plid].tehai.pop(order)
+            self.players[plid].ho.append(pop)
+            # ここで副露とか和了判定する
+            agari = 0
+            for pl in (x for x in self.players if x is not self.players[plid]):
+                agari ^= pl.tehai.hantei(True, pop)
+            if agari:
+                self.mode = 3
+            else:
+                self.mode = 99
+            return 0
+        else:
+            return -2
+
+    # 手番プレイヤーが変わった時用
+    # 主にポンに使うと思う
+    def set(self, plid):
+        self.turn = plid
+
+    # 次のプレイヤーに手番を回す
+    # ということはツモもするということ
     def next(self):
+        if self.mode is not 99:
+            return -1
         self.turn = (self.turn + 1) % 4
+        self.players[self.turn].tehai.set(self.yama.pop(0))
+        self.mode = 1
+        return 0
+
+    def scene_game(self):
+        if sys.platform == 'win32':
+            os.system('cls')
+        else:
+            os.system('clear')
+
+        print(f"{hantei.dic[self.ba+41]}{self.kyoku}局 {self.honba}本場")
+        print(f"山残り : {len(self.yama)-14}")
+        for i in range(14):
+            print(f"{i:02}", end=" ")
+        print('\n')
+        for i in range(4):
+            print(*self.players[i].tehai.conv())
+            print()
+        print()
+
+        print(" players - points : ho")
+        for p0 in self.players:
+            print(f"{p0.name:8s} - {p0.point:6d} : ",
+                  *(hantei.dic[x] for x in p0.ho))
 
 
 class Player:
@@ -44,28 +105,6 @@ def used_hai(players):
         hai.extend(player.tehai)
         hai.extend(player.ho)
     return hai
-
-
-def scene_game(players):
-    if sys.platform == 'win32':
-        os.system('cls')
-    else:
-        os.system('clear')
-
-    print(f"{hantei.dic[game.ba+41]}{game.kyoku}局 {game.honba}本場")
-    print(f"山残り : {len(yama)-14}")
-    for i in range(14):
-        print(f"{i:02}", end=" ")
-    print('\n')
-    for i in range(1):
-        print(*players[i].tehai.conv())
-        print()
-    print()
-
-    print(" players - points : ho")
-    for p0 in players:
-        print(f"{p0.name:8s} - {p0.point:6d} : ",
-              *(hantei.dic[x] for x in p0.ho))
 
 
 if __name__ == '__main__':
@@ -150,4 +189,4 @@ if __name__ == '__main__':
 # Ctrl-C で終了
     except KeyboardInterrupt:
         print()
-    print("See you agein!")
+print("See you agein!")
